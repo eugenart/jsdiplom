@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body class="small">
+<div id="container">
+    <style>
+        #map-container,
+        #graph-container {
+            top: 0%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 95%;
+            position: absolute;
+            height: 100vh;
+        }
+
+        #all-container {
+            top: 100%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: absolute;
+            height: 100vh;
+        }
+
+        #map-container {
+            transition: visibility 0.3s, opacity 0.3s linear;
+        }
+    </style>
+    <!-- IMPORTANT ORDER: -->
+    <div id="map-container" class=""></div>
+    <div id="graph-container"></div>
+    <div id="all-container" class="row mt-3">
+        <div class="col-12 row">
+            <div class="col-2">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-title p-0 mb-0 text-center">Nodes</p>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="form-check col-12">
+                            <input type="checkbox" class="form-check-input" id="editCheck1">
+                            <label class="form-check-label" for="editCheck1">Is editable</label>
+                        </div>
+                        <table class="table table-sm table-bordered col-12 tnodes m-0">
+                            <thead>
+                            <th>id</th>
+                            <th>name</th>
+                            <th></th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-title p-0 mb-0 text-center">Edges</p>
+                    </div>
+                    <div class="card-body p-2">
+                        <form action="" class="col-12" id="addEdge">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <label>source</label>
+                                    <select id="source-nodes" class="col-12 form-control form-control-sm">
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label>target</label>
+                                    <select id="target-nodes" class="col-12 form-control form-control-sm">
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label>button</label>
+                                    <button type="submit"
+                                            class="btn btn-sm btn-success col-12 form-control form-control-sm">Add edge
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-sm table-bordered col-12 tedges m-0">
+                            <thead>
+                            <th>id</th>
+                            <th>source</th>
+                            <th>target</th>
+                            <th>km</th>
+                            <th>cars</th>
+                            <th>bandwidth</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="card">
+                    <div class="card-header">
+                        <p class="card-title p-0 mb-0 text-center">Save/Load</p>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="form-group">
+                            <select id="seletModel" class="form-control form-control-sm"></select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="saveName" class="form-control form-control-sm">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button id="saveModel" type="button" class="btn btn-sm btn-primary col-12"
+                                        onclick="saveModel()">Save
+                                </button>
+                            </div>
+                            <div class="col">
+                                <button id="loadModel" type="button" class="btn btn-sm btn-warning col-12"
+                                        onclick="loadModel()">Load
+                                </button>
+                                <div>
+                                    <button onclick="runApp()">Начать симуляцию</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2">
+                <h3 id="worldTimer">00:00</h3>
+                <h3 id="carsOnMap">0</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+
+<!-- START SIGMA IMPORTS -->
+<script src="../src/sigma.core.js"></script>
+<script src="../src/conrad.js"></script>
+<script src="../src/utils/sigma.utils.js"></script>
+<script src="../src/utils/sigma.polyfills.js"></script>
+<script src="../src/sigma.settings.js"></script>
+<script src="../src/classes/sigma.classes.dispatcher.js"></script>
+<script src="../src/classes/sigma.classes.configurable.js"></script>
+<script src="../src/classes/sigma.classes.graph.js"></script>
+<script src="../src/classes/sigma.classes.camera.js"></script>
+<script src="../src/classes/sigma.classes.quad.js"></script>
+<script src="../src/captors/sigma.captors.mouse.js"></script>
+<script src="../src/captors/sigma.captors.touch.js"></script>
+<script src="../src/renderers/sigma.renderers.canvas.js"></script>
+<script src="../src/renderers/sigma.renderers.webgl.js"></script>
+<script src="../src/renderers/sigma.renderers.svg.js"></script>
+<script src="../src/renderers/sigma.renderers.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="../src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.curvedArrow.js"></script>
+<script src="../src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="../src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="../src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="../src/misc/sigma.misc.animation.js"></script>
+<script src="../src/misc/sigma.misc.bindEvents.js"></script>
+<script src="../src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="../src/misc/sigma.misc.drawHovers.js"></script>
+<!-- END SIGMA IMPORTS -->
+<script src="../plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+<script src="../plugins/sigma.plugins.animate/sigma.plugins.animate.js"></script>
+<script src="../plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
+
+<script src="../plugins/sigma.plugins.leaflet/sigma.plugins.leaflet.js"></script>
+
+<script src="../plugins/sigma.renderers.linkurious/settings.js"></script>
+<script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.labels.def.js"></script>
+<script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="../plugins/singleclick/singleclick.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script src="../src/scripts/sigmaInit.js"></script>
+<script src="../src/scripts/helpers.js"></script>
+<script src="../src/scripts/db.js"></script>
+<script src="../src/scripts/mapActions.js"></script>
+<script src="../src/scripts/carActions.js"></script>
+<script src="../src/scripts/main.js"></script>
+<script>
+    // Listen to some map events
+    $('#editCheck1').change(function () {
+        isEditable = !isEditable
+    });
+
+    var nodesNumber = 0;
+
+    function resetSelects() {
+        $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').empty();
+        $.each(g.nodes, (k, v) => {
+            $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').append(new Option(v.label, v.id));
+        })
+    }
+
+    // Fit the view to the graph
+    leafletPlugin.fitBounds();
+    $(document).ready(function () {
+
+        if (localStorage && localStorage.names) {
+            modelNames = localStorage.names
+            modelNames = JSON.parse(modelNames)
+            $.each(modelNames, function (k, v) {
+                $('#seletModel').append(new Option(v, v))
+            })
+        }
+    })
+</script>
+</html>
+
+
+
