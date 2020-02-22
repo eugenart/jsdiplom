@@ -59,6 +59,7 @@ function generateCar() {
 }
 
 function roadtrip(index, route, start = null, number = 0) {
+    //console.log(route)
     let startEdge = start == null ? route.start : start;
     let finish = route.nodes[number];
     let currentEdge = $.grep(g.edges, function (item) {
@@ -68,7 +69,7 @@ function roadtrip(index, route, start = null, number = 0) {
     if (!currentEdge) {
         console.log(cars[index]);
     }
-    let edgeTime = (currentEdge.distance / cars[index].speed) * 360000;
+    let edgeTime = (currentEdge.distance / cars[index].speed) * 60 * minuteVsReal;
 
     refreshEdge(currentEdge);
     number += 1;
@@ -77,7 +78,6 @@ function roadtrip(index, route, start = null, number = 0) {
         if (number < route.nodes.length) {
             roadtrip(index, route, finish, number)
         } else {
-            // console.log( cars[index].number + ' прибыла в пункт назначения!');
             cars[index].onRoad = false;
             let nodes = g.nodes.slice();
             nodes = $.grep(nodes, function (item) {
@@ -89,7 +89,10 @@ function roadtrip(index, route, start = null, number = 0) {
             while (cars[index].route.finish.id === cars[index].route.start.id) {
                 cars[index].route.finish = nodes[Math.floor(Math.random() * nodes.length)];
             }
+           // console.log(cars[index].number + ' ' + cars[index].onRoad + ' прибыла в пункт назначения!');
+           // console.log(cars[index]);
         }
+
     }, edgeTime)
 }
 
@@ -99,35 +102,53 @@ function refreshEdge(currentEdge, enter = true) {
     });
     edge = edge[0];
     enter === true ? edge.cars += 1 : edge.cars -= 1;
-    enter === true ? carsOnMap += 1 : carsOnMap -= 1;
-    // if (edge.cars === 0) {
-    //     edge.color = 'black';
-    // } else if (edge.cars <= 10) {
-    //     edge.color = 'green';
-    // } else if (edge.cars > 10 && edge.cars < 20) {
-    //     edge.color = 'blue';
-    // } else {
-    //     edge.color = 'red';
-    // }
-    // sigmaInstance.refresh();
+}
+
+function redrawEdge() {
+    if (edge.cars === 0) {
+        edge.color = 'black';
+    } else if (edge.cars <= 10) {
+        edge.color = 'green';
+    } else if (edge.cars > 10 && edge.cars < 20) {
+        edge.color = 'blue';
+    } else {
+        edge.color = 'red';
+    }
+    sigmaInstance.refresh();
 }
 
 function createRoute(index) {
-    sNode = g.nodes.find(item => item === cars[index].route.start);
-    tNode = g.nodes.find(item => item === cars[index].route.finish);
-    let result = dijkstra(sNode.id, tNode.id);
-    let distance = result[0];
-    let route = result[1];
-    route = route.splice(1, route.length - 1);
-    let newDirection = {
-        id: 'd' + g.directions.length,
-        start: sNode.id,
-        finish: tNode.id,
-        size: 100,
-        distance: distance,
-        nodes: route,
-        formatedRoute: ''
-    };
-    g.directions.push(newDirection);
-    return newDirection;
+    sNode = cars[index].route.start;
+    tNode = cars[index].route.finish;
+    let newDirection = $.grep(g.directions, function (item) {
+        return ((item.start === sNode.id && item.finish === tNode.id)) //|| (item.start === tNode.id && item.finish === sNode.id))
+    });
+  //  console.log(newDirection, sNode, tNode, g.directions)
+    return newDirection[0];
+}
+
+
+function generateDirections() {
+    let tempArr = g.nodes.slice(0, g.nodes.length)
+    console.log(tempArr)
+    $.each(g.nodes, (k,start) => {
+        // tempArr.splice(0,1)
+        $.each(tempArr, (key,finish) => {
+            if (start !== finish) {
+                let result =  dijkstra(start.id, finish.id);
+                let distance = result[0];
+                let route = result[1];
+                route = route.splice(1, route.length - 1);
+                let newDirection = {
+                    id: 'd' + g.directions.length,
+                    start: start.id,
+                    finish: finish.id,
+                    distance: distance,
+                    nodes: route,
+
+                };
+                g.directions.push(newDirection);
+            }
+        })
+    })
 }
