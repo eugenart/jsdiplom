@@ -105,16 +105,18 @@ function refreshEdge(currentEdge, enter = true) {
 }
 
 function redrawEdge() {
-    if (edge.cars === 0) {
-        edge.color = 'black';
-    } else if (edge.cars <= 10) {
-        edge.color = 'green';
-    } else if (edge.cars > 10 && edge.cars < 20) {
-        edge.color = 'blue';
-    } else {
-        edge.color = 'red';
-    }
-    sigmaInstance.refresh();
+    $.each(g.edges, (k,edge) => {
+        if (edge.cars === 0) {
+            edge.color = 'black';
+        } else if (edge.cars <= 100) {
+            edge.color = 'green';
+        } else if (edge.cars > 100 && edge.cars < 200) {
+            edge.color = 'blue';
+        } else {
+            edge.color = 'red';
+        }
+        sigmaInstance.refresh();
+    })
 }
 
 function createRoute(index) {

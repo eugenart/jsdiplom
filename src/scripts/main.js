@@ -2,8 +2,8 @@ let run = false,
     hours = 0,
     minutes = 0,
     minuteVsReal = 420, //420 - 10 минут реального времени
-    //roadCoefs = [0.08, 0.02, 0.01, 0.02, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
-    roadCoefs = [0.68, 0.85, 0.99, 0.99, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
+    roadCoefs = [0.08, 0.02, 0.01, 0.02, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
+    //roadCoefs = [0.68, 0.85, 0.99, 0.99, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
     carsInCity = 10000,
     cars = [];
 
@@ -33,13 +33,11 @@ function runCars() {
     carsToRoad.length ? runEachCar(carsToRoad) : null
 }
 
-function runEachCar(carsToRoad, index = 0) {
-    if (index < carsToRoad.length) {
-        let route = createRoute(carsToRoad[index]);
-        roadtrip(carsToRoad[index], route);
-        runEachCar(carsToRoad, index + 1);
-    }
-
+function runEachCar(carsToRoad) {
+    $.each(carsToRoad, (k,car) => {
+        let route = createRoute(car);
+        roadtrip(car, route);
+    })
 }
 
 function isCarOnRoad() {
@@ -71,6 +69,7 @@ function startDay() {
     $("#worldTimer").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
     setTimeout(() => {
         runCars();
+        redrawEdge()
         $('#carsOnMap').text(isCarOnRoad());
         minutes += 1;
         minutes === 60 ? (hours += 1, minutes = 0) : null;
