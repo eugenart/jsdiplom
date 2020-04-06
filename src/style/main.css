@@ -1,0 +1,1127 @@
+@charset "UTF-8";
+body {
+    outline: none !important;
+    height: 100vh;
+    width: 100vw;
+    background-size: cover;
+    /*background: linear-gradient(45deg, #EECFBA, #C5DDE8) no-repeat;*/
+    overflow: hidden;
+}
+
+body * {
+    outline: none !important;
+}
+
+#hello {
+    height: 100vh;
+    width: 100vw;
+    background-size: cover;
+    overflow: hidden;
+    z-index: 100 !important;
+    background: white no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#hello_inner {
+    display: flex;
+    flex-direction: column;
+}
+
+#upload_model {
+    display: none;
+    flex-direction: column;
+}
+
+#hello_inner span, #upload_model > span {
+    color: #ff714b;
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#hello_inner button, #upload_model > button {
+    color: white;
+    cursor: pointer;
+    display: block;
+    width: fit-content;
+    margin: auto;
+    background-color: #ff714b;
+    padding: 20px 40px;
+    font-size: 26px;
+    border: 2px solid #ff714b;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+#hello_inner button:hover, #hello_inner button:hover, #upload_model > button:hover {
+    background-color: transparent;
+    color: #ff714b;
+}
+
+#model-actions button {
+    background-color: #ff714b;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#notification-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: fit-content;
+    z-index: 11111;
+    /*background-color: #ff714b;*/
+    height: auto;
+}
+
+.notification {
+    text-align: center;
+    background-color: #8cc395;
+    color: white;
+    width: fit-content;
+    padding: 20px;
+    animation: 5s opacity;
+    opacity: 0;
+    margin-bottom: 10px;
+}
+
+@keyframes opacity {
+    0% {
+        opacity: 0
+    }
+    50% {
+        opacity: 1
+    }
+    0% {
+        opacity: 0
+    }
+}
+
+#models {
+    flex-wrap: wrap;
+    list-style: none;
+    color: #041e42;
+    display: flex;
+    justify-content: space-around;
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+    /*!*display: grid;*!*/
+    /*!*grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));*!*/
+    /*margin-bottom: 20px;*/
+    /*text-align: center;*/
+}
+
+#model-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.model_to_chose input[type="text"] {
+    border: none;
+    border-bottom: 1px solid #ff714b;
+    color: #041e42;
+}
+
+#create_new_model {
+    height: 40px;
+}
+
+#create_new_model:disabled {
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#start-app-btn:disabled {
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#all-stat-outer {
+    display: none;
+    background-color: white;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.4);
+    position: absolute;
+    left: 5vw;
+    z-index: 22222;
+    top: 5vh;
+    height: 90vh;
+    width: 90vw;
+}
+
+#time-input {
+    border: none;
+    border-bottom: 2px solid #ff714b;
+    color: #041e42;
+}
+
+#all-stat-body {
+    width: 100%;
+    height: 90%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    padding: 10px;
+    grid-row-gap: 15px;
+    grid-column-gap: 15px;
+    overflow-y: scroll;
+}
+
+.all-stat-item {
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
+    height: 300px;
+    width: 300px;
+    padding: 10px;
+}
+
+#all-stat-footer {
+    width: 100%;
+    height: 10%;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#all-stat-footer button {
+    border: none;
+    margin-right: 20px;
+    cursor: pointer;
+    color: #041e42;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+
+.model_to_chose {
+    max-height: 250px;
+    min-height: 250px;
+    margin: 20px 30px;
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+    padding: 10px;
+}
+
+.flex-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.model_to_chose hr {
+    margin: 0;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.model_to_chose .model_name {
+    padding: 0 10px 10px 10px;
+    color: #ff714b;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    display: inline-block;
+}
+
+.model_to_chose .model_parameters {
+    padding-top: 10px;
+    list-style: none;
+}
+
+.model_to_chose button {
+    box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+    color: white;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    margin: auto;
+    background-color: #ff714b;
+    padding: 5px 5px;
+    font-size: 16px;
+    border: 2px solid #ff714b;
+    height: 40px;
+}
+
+.model_to_chose button:hover {
+    background-color: transparent;
+    color: #ff714b;
+}
+
+.delete_link {
+    cursor: pointer;
+    color: red;
+}
+
+#modal_outer, #model-modal-outer, #generate-directions-outer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#generate-directions-modal {
+    background-color: white;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px 0 rgba(255, 255, 255, 0.1);
+}
+
+
+#confirm_modal, #model-modal-settings, #modal-edge-edit {
+    background-color: white;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px 0 rgba(255, 255, 255, 0.1);
+}
+
+#confirm_modal_header, #model-modal-header, #modal-edge-header, #generate-directions-modal-header, #modal-edge-edit-header {
+    background-color: #ff714b;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    color: white;
+    padding: 15px 30px;
+}
+
+#modal-edge-header p, #modal-edge-edit-header p {
+    margin: 0;
+}
+
+#confirm_modal_body, #model-modal_body, #modal-edge_body, #generate-directions-modal-body, #modal-edge-edit_body {
+    padding: 30px;
+    color: #041e42;
+}
+
+#modal-edge-edit_body span {
+    font-size: 12px;
+}
+
+#modal-edge-edit_body > code {
+    color: #041e42;
+    font-size: 14px;
+    padding: 6px;
+    border-left: 2px solid #041e42;
+    border-right: 2px solid #041e42;
+    margin: 10px 0;
+}
+
+#modal-edge-edit_body {
+    margin-bottom: 10px;
+    max-width: 500px;
+}
+
+#modal-edge-edit_body select {
+    margin-bottom: 20px;
+    margin-left: 10px;
+    outline: none !important;
+    color: #041e42;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid #ff714b;
+}
+
+#model-modal_body, #modal-edge_body, #modal-edge-edit_body {
+    display: flex;
+    flex-direction: column;
+}
+
+#generate-directions-modal-body {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #041e42;
+}
+
+#generate-directions-modal-body span {
+    text-align: center;
+}
+
+#modal-edge_body p {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+#modal-edge_body {
+    font-size: 14px;
+}
+
+#modal-edge_body p span {
+    margin-right: 10px;
+}
+
+#model-modal-header-body {
+    display: flex;
+    flex-direction: column;
+    padding: 0 30px;
+}
+
+.margin-top-bottom {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+#cars-div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+#cars-div p {
+    margin: 0;
+}
+
+#cars-div-inner {
+    width: min-content;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#cars-div-inner span {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#cars-div-inner input {
+    border: none;
+    border-bottom: 2px solid #ff714b;
+    color: #041e42;
+}
+
+.edit-edge-info {
+    cursor: pointer;
+    color: #041e42;
+    font-size: 18px;
+    background-color: transparent;
+    border: none;
+    outline: none !important;
+}
+
+.delete-edge-info {
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    font-size: 18px;
+    outline: none !important;
+    color: #041e42;
+}
+
+
+#show-all-stat-btn {
+    margin: auto;
+    color: white;
+    background-color: #ff714b;
+    padding: 5px 10px;
+    display: block;
+}
+
+/* The container */
+.container-check {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 0 !important;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container-check input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 22px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container-check:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container-check input:checked ~ .checkmark {
+    background-color: #ff714b;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container-check input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container-check .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+#addEdge:disabled {
+    cursor: not-allowed;
+    background-color: #cccccc;
+}
+
+#start-app-btn {
+    border: none;
+    color: #fff;
+    background-color: #ff714b;
+    cursor: pointer;
+    width: fit-content;
+}
+
+#start-app-btn:disabled {
+
+}
+
+#world-stat {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#cars-in-city {
+
+}
+
+.intensity-item label {
+    font-size: 12px;
+}
+
+.intensity-item label input {
+    border: none;
+    border-bottom: 2px solid #ff714b;
+    color: #041e42;
+    margin-left: 20px;
+}
+
+#intensity-select {
+    background-color: transparent;
+    border: none;
+    color: #041e42;
+    border-bottom: 2px solid #ff714b;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+#intensity-select-label {
+    font-size: 12px;
+    color: #041e42;
+}
+
+#confirm_modal_footer, #model-modal-footer, #modal-edge-footer, #modal-edge-edit-footer {
+    padding: 15px 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#confirm_modal_footer button:first-child, #model-modal-footer button:first-child, #modal-edge-footer button, #modal-edge-edit-footer button:first-child {
+    border: none;
+    margin-right: 20px;
+    cursor: pointer;
+    color: #041e42;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+#confirm_modal_footer button:first-child:hover, #model-modal-footer button:first-child:hover, #modal-edge-footer button:hover, #modal-edge-edit-footer button:first-child:hover {
+    background-color: rgba(255, 113, 75, 0.3);
+}
+
+#confirm_modal_footer button:last-child, #model-modal-footer button:last-child, #modal-edge-edit-footer button:last-child {
+    background-color: rgba(255, 113, 75, 0.9);
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+}
+
+#confirm_modal_footer button:last-child:hover, #model-modal-footer button:last-child:hover, #modal-edge-edit-footer button:last-child:hover {
+    background-color: #ff714b;
+}
+
+#confirm_modal_header p, #model-modal-header p {
+    margin: 0;
+}
+
+#model-modal-header p {
+    text-align: center;
+}
+
+
+/*******************************/
+
+
+/**
+ * Переключаемая боковая панель навигации
+ * выдвигающаяся справа
+ */
+
+.nav {
+    /*  ширна произвольная, не стесняйтесь экспериментировать */
+    width: 50vw;
+    min-width: 50vw;
+    /* фиксируем и выставляем высоту панели на максимум */
+    height: 100%;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    /* сдвигаем (прячем) панель относительно правого края страницы */
+    right: -50vw;
+    /* внутренние отступы */
+    padding: 15px 20px;
+    /* плавный переход смещения панели */
+    -webkit-transition: right 0.3s;
+    -moz-transition: right 0.3s;
+    transition: right 0.3s;
+    /* определяем цвет фона панели */
+    background: white;
+    /* поверх других элементов */
+    z-index: 2000;
+}
+
+#nav-inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#nav-inner hr {
+    width: 50%;
+    margin: 5px auto;
+    border: none;
+    box-shadow: none;
+    height: 2px;
+    color: #ff714b;
+    background-color: #ff714b;
+}
+
+canvas#simulation-model-draw {
+    display: block;
+    margin: auto;
+    width: 400px !important;
+    height: 400px !important;
+}
+
+#simulation-model-name {
+    text-align: center;
+}
+
+#simulation-model-intensity {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+#simulation-model-stat {
+    display: flex;
+    justify-content: space-around;
+}
+
+/**
+ * Кнопка переключения панели
+ * тег <label>
+ */
+
+
+#edges-select {
+    display: flex;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    justify-content: space-around;
+}
+
+#edges-select label {
+    font-size: 12px;
+}
+
+#edges-select div:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#edges-select button {
+    padding: 5px 10px;
+    background-color: #ff714b;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#edges-select select {
+    border: none;
+    border-bottom: 2px solid #ff714b;
+    background-color: transparent;
+}
+
+#edges-select > div {
+    display: flex;
+    flex-direction: column;
+}
+
+#nodes-select, #edges-select-table {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+#nodes-select table, #edges-select-table table {
+    font-size: 14px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+#nodes-select table th, #nodes-select table td:first-child, #edges-select-table table th, #edges-select-table table td:first-child {
+    background: #AFCDE7;
+    color: white;
+    padding: 10px 20px;
+}
+
+#nodes-select table th, #nodes-select table td, #edges-select-table table th, #edges-select-table table td {
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+}
+
+#nodes-select table td, #edges-select-table table td {
+    background: #D8E6F3;
+}
+
+#nodes-select table th:first-child, #nodes-select table td:first-child, #edges-select-table table th:first-child, #edges-select-table table td:first-child {
+    text-align: left;
+}
+
+
+#modal-edge-info-outer, #modal-edge-edit-outer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#modal-edge-info {
+    background-color: white;
+    min-width: 800px;
+    width: 550px;
+    overflow-y: scroll;
+    max-height: 90vh;
+    height: 90vh;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px 0 rgba(255, 255, 255, 0.1);
+}
+
+
+.span-delimeter {
+    margin: 10px 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.show-edge-info {
+    display: block;
+    margin: auto;
+    border: none;
+    text-decoration: underline;
+    color: white;
+    font-weight: bold;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none !important;
+}
+
+#edge-nerf-coefs {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-toggle {
+    /* абсолютно позиционируем */
+    position: absolute;
+    /* относительно правого края панели */
+    right: 50vw;
+    /* отступ от верхнего края панели */
+    top: 1em;
+    /* внутренние отступы */
+    padding: 0.5em;
+    /* определяем цвет фона переключателя
+     * чаще вчего в соответствии с цветом фона панели
+    */
+    background: inherit;
+    /* цвет текста */
+    color: #041e42;
+    /* вид курсора */
+    cursor: pointer;
+    /* размер шрифта */
+    font-size: 1.5em;
+    line-height: 1;
+    /* всегда поверх других элементов страницы */
+    z-index: 2001;
+    /* анимируем цвет текста при наведении */
+    -webkit-transition: color .25s ease-in-out;
+    -moz-transition: color .25s ease-in-out;
+    transition: color .25s ease-in-out;
+}
+
+
+/* определяем текст кнопки
+ * символ Unicode (TRIGRAM FOR HEAVEN)
+*/
+
+.nav-toggle:after {
+    content: '\2630';
+    text-decoration: none;
+}
+
+
+/* цвет текста при наведении */
+
+.nav-toggle:hover {
+    color: #ff714b;
+}
+
+
+/**
+ * Скрытый чекбокс (флажок)
+ * невидим и недоступен :)
+ * имя селектора атрибут флажка
+ */
+
+[id='nav-toggle'] {
+    position: absolute;
+    display: none;
+}
+
+
+/**
+ * изменение положения переключателя
+ * при просмотре на мобильных устройствах
+ * когда навигация раскрыта, распологаем внутри панели
+*/
+
+[id='nav-toggle']:checked ~ .nav > .nav-toggle {
+    left: auto;
+    right: 2px;
+    top: 1em;
+}
+
+
+/**
+ * Когда флажок установлен, открывается панель
+ * используем псевдокласс:checked
+ */
+
+[id='nav-toggle']:checked ~ .nav {
+    right: 0;
+    box-shadow: -4px 0 20px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: -4px 0 20px 0 rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: -4px 0 20px 0 rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+
+/*
+ * смещение контента страницы
+ * на размер ширины панели,
+ * фишка необязательная, на любителя
+*/
+
+[id='nav-toggle']:checked ~ main > article {
+    -webkit-transform: translateX(-320px);
+    -moz-transform: translateX(-320px);
+    transform: translateX(-320px);
+}
+
+
+/*
+ * изменение символа переключателя,
+ * привычный крестик (MULTIPLICATION X),
+ * вы можете испльзовать любой другой значок
+*/
+
+[id='nav-toggle']:checked ~ .nav > .nav-toggle:after {
+    content: '\2715';
+}
+
+
+/**
+ * профиксим баг в Android <= 4.1.2
+ * см: http://timpietrusky.com/advanced-checkbox-hack
+ */
+
+body {
+    -webkit-animation: bugfix infinite 1s;
+}
+
+@-webkit-keyframes bugfix {
+    to {
+        padding: 0;
+    }
+}
+
+
+/**
+ * Формируем стиль заголовка (логотип) панели
+*/
+
+/*плавное появление заголовка (логотипа) при раскрытии панели */
+
+[id='nav-toggle']:checked ~ .nav h2 {
+    opacity: 1;
+    transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+}
+
+
+/*map style*/
+
+#map-container,
+#graph-container {
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    position: absolute;
+    height: 80vh;
+    /*visibility: collapse;*/
+    /*z-index: 10 !important;*/
+    box-shadow: 0 1px 5px 0 rgba(50, 50, 50, 0.75);
+}
+
+#main-container {
+    width: 100vw;
+    height: 100vh;
+    visibility: collapse;
+    position: relative;
+}
+
+#model-modal-settings {
+    background-color: white;
+    width: fit-content;
+    border-radius: 5px;
+    box-shadow: 0 1px 10px 0 rgba(255, 255, 255, 0.1);
+    height: 90vh;
+    overflow-y: scroll;
+}
+
+#toggle-hamburger {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    z-index: 1000;
+}
+
+
+#all-container {
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    height: 100vh;
+}
+
+
+@supports (-webkit-appearance: none) or (-moz-appearance: none) {
+    input[type='checkbox'],
+    input[type='radio'] {
+        --active: #ff714b;
+        --active-inner: #fff;
+        --focus: 2px rgba(39, 94, 254, .3);
+        --border: #BBC1E1;
+        --border-hover: #ff714b;
+        --background: #fff;
+        --disabled: #F6F8FF;
+        --disabled-inner: #E1E6F9;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        height: 21px;
+        outline: none !important;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+        border: 1px solid var(--bc, var(--border));
+        background: var(--b, var(--background));
+        -webkit-transition: background .3s, border-color .3s, box-shadow .2s;
+        transition: background .3s, border-color .3s, box-shadow .2s;
+    }
+
+    input[type='checkbox']:after,
+    input[type='radio']:after {
+        content: '';
+        display: block;
+        left: 0;
+        top: 0;
+        position: absolute;
+        -webkit-transition: opacity var(--d-o, 0.2s), -webkit-transform var(--d-t, 0.3s) var(--d-t-e, ease);
+        transition: opacity var(--d-o, 0.2s), -webkit-transform var(--d-t, 0.3s) var(--d-t-e, ease);
+    }
+
+    input[type='checkbox']:checked,
+    input[type='radio']:checked {
+        --b: var(--active);
+        --bc: var(--active);
+        --d-o: .3s;
+        --d-t: .6s;
+        --d-t-e: cubic-bezier(.2, .85, .32, 1.2);
+    }
+
+    input[type='checkbox']:disabled,
+    input[type='radio']:disabled {
+        --b: var(--disabled);
+        cursor: not-allowed;
+        opacity: .9;
+    }
+
+    input[type='checkbox']:disabled:checked,
+    input[type='radio']:disabled:checked {
+        --b: var(--disabled-inner);
+        --bc: var(--border);
+    }
+
+    input[type='checkbox']:disabled + label,
+    input[type='radio']:disabled + label {
+        cursor: not-allowed;
+    }
+
+    input[type='checkbox']:hover:not(:checked):not(:disabled),
+    input[type='radio']:hover:not(:checked):not(:disabled) {
+        --bc: var(--border-hover);
+    }
+
+    input[type='checkbox']:focus,
+    input[type='radio']:focus {
+        box-shadow: 0 0 0 var(--focus);
+    }
+
+    input[type='checkbox']:not(.switch),
+    input[type='radio']:not(.switch) {
+        width: 21px;
+    }
+
+    input[type='checkbox']:not(.switch):after,
+    input[type='radio']:not(.switch):after {
+        opacity: var(--o, 0);
+    }
+
+    input[type='checkbox']:not(.switch):checked,
+    input[type='radio']:not(.switch):checked {
+        --o: 1;
+    }
+
+    input[type='checkbox'] + label {
+        font-size: 14px;
+        line-height: 21px;
+        display: inline-block;
+        vertical-align: top;
+        cursor: pointer;
+        margin-left: 4px;
+    }
+
+    input[type='checkbox']:not(.switch) {
+        border-radius: 7px;
+    }
+
+    input[type='checkbox']:not(.switch):after {
+        width: 5px;
+        height: 9px;
+        border: 2px solid var(--active-inner);
+        border-top: 0;
+        border-left: 0;
+        left: 7px;
+        top: 4px;
+        -webkit-transform: rotate(var(--r, 20deg));
+        transform: rotate(var(--r, 20deg));
+    }
+
+    input[type='checkbox']:not(.switch):checked {
+        --r: 43deg;
+    }
+
+    input[type='checkbox'].switch {
+        width: 38px;
+        border-radius: 11px;
+    }
+
+    input[type='checkbox'].switch:after {
+        left: 2px;
+        top: 2px;
+        border-radius: 50%;
+        width: 15px;
+        height: 15px;
+        background: var(--ab, var(--border));
+        -webkit-transform: translateX(var(--x, 0));
+        transform: translateX(var(--x, 0));
+    }
+
+    input[type='checkbox'].switch:checked {
+        --ab: var(--active-inner);
+        --x: 17px;
+    }
+
+    input[type='checkbox'].switch:disabled:not(:checked):after {
+        opacity: .6;
+    }
+}
+
+html {
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+*:before, *:after {
+    box-sizing: inherit;
+}
+
+
+/*#map-container {*/
+/*    transition: visibility 0.3s, opacity 0.3s linear;*/
+/*}*/

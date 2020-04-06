@@ -1,13 +1,5 @@
-let run = false,
-    hours = 0,
-    minutes = 0,
-    minuteVsReal = 420, //420 - 10 минут реального времени
-    roadCoefs = [0.08, 0.02, 0.01, 0.02, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
-    //roadCoefs = [0.68, 0.85, 0.99, 0.99, 0.06, 0.14, 0.27, 0.30, 0.52, 0.68, 0.99, 0.84, 0.74, 0.75, 0.83, 0.97, 0.99, 0.95, 0.79, 0.47, 0.26, 0.24, 0.19, 0.12],
-    carsInCity = 10000,
-    cars = [];
-
 function runApp() {
+    document.getElementById('start-app-btn').setAttribute('disabled', 'disabled');
     if (run === false) {
         cars = [];
         for (let i = 0; i < carsInCity; i++) {
@@ -15,7 +7,13 @@ function runApp() {
             cars.push(car)
         }
     }
-    checkEngine() ? (run = !run, startDay()) : alert('Не все точки соединены!');
+    if (checkEngine()) {
+        run = !run;
+        startDay();
+    } else {
+        alert('Не все точки соединены!');
+    }
+
 }
 
 function carsToStart() {
@@ -24,9 +22,9 @@ function carsToStart() {
 
 function runCars() {
     let carsAmount = carsToStart();
-    console.log(carsAmount);
-    let carsToRoad = []
-    while(carsToRoad.length < carsAmount && carsAmount > 0) {
+    // console.log(carsAmount);
+    let carsToRoad = [];
+    while (carsToRoad.length < carsAmount && carsAmount > 0) {
         let index = Math.floor(Math.random() * cars.length);
         cars[index].onRoad === false ? (carsToRoad.push(index), cars[index].onRoad = true) : null;
     }
@@ -34,7 +32,7 @@ function runCars() {
 }
 
 function runEachCar(carsToRoad) {
-    $.each(carsToRoad, (k,car) => {
+    $.each(carsToRoad, (k, car) => {
         let route = createRoute(car);
         roadtrip(car, route);
     })
@@ -69,7 +67,7 @@ function startDay() {
     $("#worldTimer").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
     setTimeout(() => {
         runCars();
-        redrawEdge()
+        redrawEdge();
         $('#carsOnMap').text(isCarOnRoad());
         minutes += 1;
         minutes === 60 ? (hours += 1, minutes = 0) : null;

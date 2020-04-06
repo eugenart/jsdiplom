@@ -13,7 +13,7 @@ function nextNode(matrix, weights, nodeName, startP, routes) {
         return (item.source === nodeName && item.target !== startP);
     });
     $.each(tempMatrix, function (key, value) {
-        newDistance = weights[nodeName] + value.distance
+        newDistance = weights[nodeName] + value.distance;
         if ((weights[value.target] == null) || (weights[value.target] > newDistance)) {
             weights[value.target] = newDistance
             routes[value.target] = value.source
@@ -23,11 +23,9 @@ function nextNode(matrix, weights, nodeName, startP, routes) {
             if (item.source === nodeName && item.target === value.target) {
                 return false
             }
-            if (item.target === nodeName && item.source === value.target) {
-                return false
-            }
+            return !(item.target === nodeName && item.source === value.target);
 
-            return true
+
         });
         let result = nextNode(matrix, weights, value.target, startP, routes);
         weights = result[0];
@@ -45,10 +43,14 @@ function generateCar() {
             finish: null
         },
         number: null,
-        onRoad: false
+        onRoad: false,
+        length: null,
+        distanceBetweenCars: null,
     };
     let nodes = g.nodes.slice();
     car.speed = randomInteger(40, 80);
+    car.length = randomInteger(4, 10);
+    car.distanceBetweenCars = Math.random() * 2 + 0.5;
     car.route.start = nodes.splice(Math.floor(Math.random() * nodes.length), 1)[0];
     car.route.finish = nodes[Math.floor(Math.random() * nodes.length)];
     while (car.route.finish.id === car.route.start.id) {
@@ -69,12 +71,13 @@ function roadtrip(index, route, start = null, number = 0) {
     if (!currentEdge) {
         console.log(cars[index]);
     }
-    let edgeTime = (currentEdge.distance / cars[index].speed) * 60 * minuteVsReal;
+    cars[index].speed = randomInteger(roadClasses[currentEdge.class].minSpeed, roadClasses[currentEdge.class].maxSpeed) * currentEdge.bandwidth * pavementTypes[currentEdge.pavementType].coef;
+    let edgeTime = (currentEdge.distance / (cars[index].speed)) * 60 * minuteVsReal;
 
-    refreshEdge(currentEdge);
+    refreshEdge(currentEdge, cars[index]);
     number += 1;
-    setTimeout(() => {
-        refreshEdge(currentEdge, false);
+    roadTripTimeOut = setTimeout(() => {
+        refreshEdge(currentEdge, cars[index], false);
         if (number < route.nodes.length) {
             roadtrip(index, route, finish, number)
         } else {
@@ -89,32 +92,68 @@ function roadtrip(index, route, start = null, number = 0) {
             while (cars[index].route.finish.id === cars[index].route.start.id) {
                 cars[index].route.finish = nodes[Math.floor(Math.random() * nodes.length)];
             }
-           // console.log(cars[index].number + ' ' + cars[index].onRoad + ' прибыла в пункт назначения!');
-           // console.log(cars[index]);
+            // console.log(cars[index].number + ' ' + cars[index].onRoad + ' прибыла в пункт назначения!');
+            // console.log(cars[index]);
         }
 
     }, edgeTime)
 }
 
-function refreshEdge(currentEdge, enter = true) {
+function refreshEdge(currentEdge, car, enter = true) {
     let edge = $.grep(g.edges, function (item) {
         return (item.id === currentEdge.id)
     });
     edge = edge[0];
-    enter === true ? edge.cars += 1 : edge.cars -= 1;
+    if (enter) {
+        edge.cars += 1;
+        edge.drawing[hours][hours].carsAmount += 1;
+        edge.load += car.length + car.distanceBetweenCars;
+        if (edge.drawing[hours][hours]["maxLoad"] < edge.load) {
+            edge.drawing[hours][hours]["maxLoad"] = edge.load
+        }
+        // console.log(edge.load, edge.fullLength)
+    } else {
+        edge.cars -= 1;
+        edge.load -= car.length + car.distanceBetweenCars
+    }
+
+    if (edge.isActive) {
+        let modalEdgeProgress = document.getElementById('modal-edge-progress');
+        modalEdgeProgress.max = edge.fullLength;
+        modalEdgeProgress.value = edge.load;
+    }
 }
 
 function redrawEdge() {
-    $.each(g.edges, (k,edge) => {
+    $.each(g.edges, (k, edge) => {
+        let loadCoef = edge.load / edge.fullLength;
+        console.log(edge.load, edge.fullLength);
         if (edge.cars === 0) {
             edge.color = 'black';
-        } else if (edge.cars <= 100) {
+        } else if (loadCoef > 0 && loadCoef < 0.25) {
             edge.color = 'green';
-        } else if (edge.cars > 100 && edge.cars < 200) {
-            edge.color = 'blue';
-        } else {
+        } else if (loadCoef >= 0.25 && loadCoef < 0.5) {
+            edge.color = 'yellow';
+        } else if (loadCoef >= 0.5 && loadCoef < 0.75) {
+            edge.color = 'orange';
+        } else if (loadCoef >= 0.75 && loadCoef <= 1) {
             edge.color = 'red';
+        } else if (loadCoef > 1) {
+            edge.color = 'pink';
+            console.log('перегруз ' + edge.id);
+            edge.drawing[hours][hours].overload += 1.67;
         }
+
+
+        // if (edge.cars === 0) {
+        //     edge.color = 'black';
+        // } else if (edge.cars <= 100) {
+        //     edge.color = 'green';
+        // } else if (edge.cars > 100 && edge.cars < 200) {
+        //     edge.color = 'blue';
+        // } else {
+        //     edge.color = 'red';
+        // }
         sigmaInstance.refresh();
     })
 }
@@ -125,32 +164,42 @@ function createRoute(index) {
     let newDirection = $.grep(g.directions, function (item) {
         return ((item.start === sNode.id && item.finish === tNode.id)) //|| (item.start === tNode.id && item.finish === sNode.id))
     });
-  //  console.log(newDirection, sNode, tNode, g.directions)
+    //  console.log(newDirection, sNode, tNode, g.directions)
     return newDirection[0];
 }
 
-
 function generateDirections() {
-    let tempArr = g.nodes.slice(0, g.nodes.length)
-    console.log(tempArr)
-    $.each(g.nodes, (k,start) => {
-        // tempArr.splice(0,1)
-        $.each(tempArr, (key,finish) => {
+    g.directions = [];
+    let spanDirections = document.getElementById('directions-amount');
+    for (const start of g.nodes) {
+        let tempArr = g.nodes.slice(0, g.nodes.length);
+        tempArr.forEach((finish) => {
             if (start !== finish) {
-                let result =  dijkstra(start.id, finish.id);
-                let distance = result[0];
-                let route = result[1];
-                route = route.splice(1, route.length - 1);
-                let newDirection = {
-                    id: 'd' + g.directions.length,
-                    start: start.id,
-                    finish: finish.id,
-                    distance: distance,
-                    nodes: route,
-
-                };
-                g.directions.push(newDirection);
+                generateDirection(start, finish);
+                console.log(g.directions.length);
+                // spanDirections.innerText = 'Сгенерировано маршрутов: ' + g.directions.length;
             }
-        })
-    })
+        });
+    }
+    g.directions = $.grep(g.directions, (elem) => {
+        return elem.distance !== null;
+    });
+    showNotification('Сгенерировано ' + g.directions.length + ' маршрутов.');
+    document.getElementById('generate-directions').removeAttribute('disabled');
+    document.getElementById('start-app-btn').removeAttribute('disabled');
+}
+
+function generateDirection(start, finish) {
+    let result = dijkstra(start.id, finish.id);
+    let distance = result[0];
+    let route = result[1];
+    route = route.splice(1, route.length - 1);
+    let newDirection = {
+        id: 'd' + g.directions.length,
+        start: start.id,
+        finish: finish.id,
+        distance: distance,
+        nodes: route,
+    };
+    g.directions.push(newDirection);
 }

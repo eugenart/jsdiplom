@@ -5,150 +5,402 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+    <link rel="stylesheet" href="../src/style/main.css">
+    <link rel="stylesheet" href="../src/style/hamburgers.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
+    <title>Имитационное моделирование транспортных потоков</title>
 </head>
-<body class="small">
-<div id="container">
-    <style>
-        #map-container,
-        #graph-container {
-            top: 0%;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 95%;
-            position: absolute;
-            height: 100vh;
-        }
+<body>
 
-        #all-container {
-            top: 100%;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            position: absolute;
-            height: 100vh;
-        }
+<div id="notification-container">
+</div>
 
-        #map-container {
-            transition: visibility 0.3s, opacity 0.3s linear;
-        }
-    </style>
-    <!-- IMPORTANT ORDER: -->
-    <div id="map-container" class=""></div>
-    <div id="graph-container"></div>
-    <div id="all-container" class="row mt-3">
-        <div class="col-12 row">
-            <div class="col-2">
-                <div class="card">
-                    <div class="card-header">
-                        <p class="card-title p-0 mb-0 text-center">Nodes</p>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="form-check col-12">
-                            <input type="checkbox" class="form-check-input" id="editCheck1">
-                            <label class="form-check-label" for="editCheck1">Is editable</label>
-                        </div>
-                        <table class="table table-sm table-bordered col-12 tnodes m-0">
-                            <thead>
-                            <th>id</th>
-                            <th>name</th>
-                            <th></th>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="card">
-                    <div class="card-header">
-                        <p class="card-title p-0 mb-0 text-center">Edges</p>
-                    </div>
-                    <div class="card-body p-2">
-                        <form action="" class="col-12" id="addEdge">
-                            <div class="row mb-2">
-                                <div class="col">
-                                    <label>source</label>
-                                    <select id="source-nodes" class="col-12 form-control form-control-sm">
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label>target</label>
-                                    <select id="target-nodes" class="col-12 form-control form-control-sm">
-                                    </select>
-                                </div>
-                                <div class="col">
-                                    <label>button</label>
-                                    <button type="submit"
-                                            class="btn btn-sm btn-success col-12 form-control form-control-sm">Add edge
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                        <table class="table table-sm table-bordered col-12 tedges m-0">
-                            <thead>
-                            <th>id</th>
-                            <th>source</th>
-                            <th>target</th>
-                            <th>km</th>
-                            <th>cars</th>
-                            <th>bandwidth</th>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="col-2">
-                <div class="card">
-                    <div class="card-header">
-                        <p class="card-title p-0 mb-0 text-center">Save/Load</p>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="form-group">
-                            <select id="seletModel" class="form-control form-control-sm"></select>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="saveName" class="form-control form-control-sm">
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <button id="saveModel" type="button" class="btn btn-sm btn-primary col-12"
-                                        onclick="saveModel()">Save
-                                </button>
-                            </div>
-                            <div class="col">
-                                <button id="loadModel" type="button" class="btn btn-sm btn-warning col-12"
-                                        onclick="loadModel()">Load
-                                </button>
-                                <div>
-                                    <button onclick="runApp()">Начать симуляцию</button>
-                                    <button onclick="generateDirections()">Сгенерировать маршруты</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-2">
-                <h3 id="worldTimer">00:00</h3>
-                <h3 id="carsOnMap">0</h3>
-            </div>
+<div id="all-stat-outer">
+    <div id="all-stat-body">
+    </div>
+    <div id="all-stat-footer">
+        <button id="all-stat-footer-cancel">Закрыть окно</button>
+    </div>
+</div>
+
+<!--<div id="generate-directions-outer">-->
+<!--    <div id="generate-directions-modal">-->
+<!--        <div id="generate-directions-modal-header">-->
+<!--            Генерация маршрутов модели-->
+<!--        </div>-->
+<!--        <div id="generate-directions-modal-body">-->
+<!--            <span id="directions-amount"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<div id="modal_outer">
+    <div id="confirm_modal">
+        <div id="confirm_modal_header"><p>Удалить выбранную модель</p></div>
+        <div id="confirm_modal_body">
+            <span>Вы действительно хотите <b>удалить</b> выбранную модель?
+            <br>
+         Отменить это действие <b>будет невозможно</b>.
+        </span>
+        </div>
+        <div id="confirm_modal_footer">
+            <button id="confirm_modal_footer_cancel">Отмена</button>
+            <button id="confirm_modal_footer_confirm">Удалить</button>
         </div>
     </div>
 </div>
 
+<div id="modal-edge-info-outer">
+    <div id="modal-edge-info">
+        <div id="modal-edge-header">
+            <p>Подробная информация о ребре графа</p>
+        </div>
+        <div id="modal-edge_body">
+            <p><span>Класс автомобильной дороги: <b id="modal-edge_body-type-name"></b></span></p>
+            <p><span>Тип покрытия дорожного полотна: <b id="modal-edge_body-type-ground"></b></span></p>
+            <p><span>Качество дорожного полотна: </span><b id="modal-edge_body-quality"></b></p>
+            <p><span>Длина ребра: </span><b id="modal-edge_body-length"></b></p>
+            <p><span>Количество полос: </span><b id="modal-edge_body-lane"></b></p>
+            <div>
+                <span>Скорость движения автомобилей:</span>
+                <ul>
+                    <li><span>Минимальная: </span><b id="modal-edge_body-type-min-speed"></b></li>
+                    <li><span>Максимальная: </span><b id="modal-edge_body-type-max-speed"></b></li>
+                </ul>
+            </div>
+            <p>
+                <span>Загруженность ребра: </span>
+                <progress id="modal-edge-progress" value="0" max="100"></progress>
+            </p>
+            <canvas id="modal-edge-canvas"></canvas>
+            <canvas id="modal-edge-load"></canvas>
+            <canvas id="edge-bar-chart"></canvas>
+        </div>
+        <div id="modal-edge-footer">
+            <button id="modal-edge-footer-cancel">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-edge-edit-outer">
+    <div id="modal-edge-edit">
+        <div id="modal-edge-edit-header">
+            <p>Редактирование ребра графа</p>
+        </div>
+        <div id="modal-edge-edit_body">
+            <div>
+                <span>Класс автомобильной дороги: </span>
+                <select id="edge-new-parameters-quality">
+                </select>
+            </div>
+            <div>
+                <span>Тип дорожного покрытия: </span>
+                <select id="edge-new-parameters-quality-pavement"></select>
+            </div>
+            <div>
+                <span>Качество дорожного покрытия: </span>
+                <select id="edge-new-parameters-quality-quality"></select>
+            </div>
+            <code id="edge-new-parameters-quality-description">
+
+            </code>
+            <div id="edge-new-parameters-all">
+
+            </div>
+            <div id="edge-reduction-factor">
+                <p id="edge-reduction-factor-verdict"></p>
+            </div>
+            <div id="edge-nerf-coefs">
+            </div>
+        </div>
+        <div id="modal-edge-edit-footer">
+            <button id="modal-edge-edit-footer-cancel">Отмена</button>
+            <button id="modal-edge-edit-footer-confirm">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="hello">
+    <div id="hello_inner">
+        <span>Имитационное моделирование <br> транспортных потоков</span>
+        <button id="hello_btn">Начать работу</button>
+    </div>
+    <div id="upload_model">
+        <span>Загрузите существующую имитационную модель <br> или создайте новую</span>
+        <div id="models">
+            <!--            <div class="model_to_chose">-->
+            <!--                <span class="model_name">Название модели <b>&times;</b></span>-->
+            <!--                <hr>-->
+            <!--                <ul class="model_parameters">-->
+            <!--                    <li><span>Вершин: </span><b>45</b></li>-->
+            <!--                    <li><span>Рёбер: </span><b>76</b></li>-->
+            <!--                    <li><span>Маршрутов: </span><b>783</b></li>-->
+            <!--                </ul>-->
+            <!--                <button>Выбрать</button>-->
+            <!--            </div>-->
+
+            <div class="model_to_chose flex-card">
+                <input type="text" placeholder="Название модели" id="new_model_input">
+                <hr>
+                <button disabled="disabled" id="create_new_model">Создать</button>
+            </div>
+        </div>
+        <!--        <button id="model_btn" disabled>Продолжить</button>-->
+    </div>
+    <div id="model-modal-outer">
+        <div id="model-modal-settings">
+            <div id="model-modal-header">
+                <p>Редактирование параметров новой имитационной модели</p>
+                <p><b id="model-modal-header-name"></b></p>
+            </div>
+            <div id="model-modal_body">
+                <label for="intensity-select" id="intensity-select-label">Режим распределения
+                    интенсивности движения автомобилей <br> по
+                    дороге в течение суток.</label>
+                <select name="intensity-select" id="intensity-select">
+                    <option value="0">Бимодальный</option>
+                    <option value="1">Унимодальный</option>
+                </select>
+                <span class="margin-top-bottom"><b>Коэффициенты усредненных характеристик движения:</b></span>
+                <div id="intensity-array">
+                </div>
+                <canvas id="myChart" width="400" height="400"></canvas>
+            </div>
+            <div id="model-modal-footer">
+                <button id="model-modal-footer-cancel">Отмена</button>
+                <button id="model-modal-footer-confirm">Сохранить модель</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- IMPORTANT ORDER: -->
+<div id="main-container">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <div class="nav">
+        <label for="nav-toggle" class="nav-toggle" onclick=""></label>
+        <div id="nav-inner">
+            <h3 id="simulation-model-name">Название модели</h3>
+            <hr>
+            <span id="simulation-model-intensity">Режим распределения интенсивности движения <br> автомобилей
+            по дороге в течение суток: <b id="simulation-model-intensity-b"></b>
+            </span>
+            <hr>
+            <div id="cars-div">
+                <button id="start-app-btn" onclick="runApp()">Начать симуляцию</button>
+                <div id="cars-div-inner">
+                    <span>Количество&nbsp;машин&nbsp;в&nbsp;городе:&nbsp;</span>
+                    <input id="cars-in-city">
+                </div>
+                <label class="container-check">Изменить граф
+                    <input type="checkbox" id="check-edit">
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+            <div id="world-stat">
+                <h4>Время <b id="worldTimer">00:00</b></h4>
+                <input type="time" name="selected_time" list="time-list" id="time-input">
+                <datalist id="time-list">
+                    <option value="00:00" label="Минимальное количество машин на дорогах">
+                    <option value="01:00" label="Минимальное количество машин на дорогах">
+                    <option value="02:00">
+                    <option value="03:00">
+                    <option value="04:00">
+                    <option value="05:00">
+                    <option value="06:00" label="Появление большого количества машин на дорогах">
+                    <option value="07:00">
+                    <option value="08:00" label="Максимальное количество машин на дорогах">
+                    <option value="09:00" label="Начало рабочего дня">
+                    <option value="10:00" label="Спад активности на дорогах города">
+                    <option value="11:00" label="Малое количество машин на дорогах">
+                    <option value="12:00" label="Начало обеденного времени">
+                    <option value="13:00" label="Время обеда">
+                    <option value="14:00">
+                    <option value="15:00">
+                    <option value="16:00">
+                    <option value="17:00" label="Появление большого количества машин на дорогах">
+                    <option value="18:00" label="Максимальное количество машин на дорогах">
+                    <option value="19:00">
+                    <option value="20:00">
+                    <option value="21:00">
+                    <option value="22:00">
+                    <option value="23:00" label="Минимальное количество машин на дорогах">
+                </datalist>
+                <h4>Машин на дороге <b id="carsOnMap">0</b></h4>
+            </div>
+            <hr>
+            <span class="span-delimeter">Информация об имитационной модели: </span>
+            <div id="simulation-model-stat">
+            </div>
+            <canvas id="simulation-model-draw" width="400" height="400"></canvas>
+            <hr>
+            <span class="span-delimeter">Вершины графа: </span>
+            <div id="nodes-select">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID вершины</th>
+                        <th>Название вершины</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list-nodes"></tbody>
+                </table>
+            </div>
+            <hr>
+            <span class="span-delimeter">Рёбра графа: </span>
+            <div id="edges-select">
+                <div>
+                    <label for="source-nodes">Старт</label>
+                    <select name="" id="source-nodes"></select>
+                </div>
+                <div>
+                    <button id="addEdge">Добавить ребро</button>
+                </div>
+                <div>
+                    <label for="target-nodes">Финиш</label>
+                    <select name="" id="target-nodes"></select>
+                </div>
+            </div>
+            <div id="edges-select-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID ребра</th>
+                        <th>Начало ребра</th>
+                        <th>Конец ребра</th>
+                        <th>Редактирование</th>
+                        <th>Удаление</th>
+                    </tr>
+                    </thead>
+                    <tbody id="list-edges"></tbody>
+                </table>
+            </div>
+            <hr>
+            <div id="all-stat">
+                <button id="show-all-stat-btn">Посмотреть подробную статистику</button>
+            </div>
+            <hr>
+            <div id="model-actions">
+                <button class="" id="save-current-model">Сохранить модель</button>
+                <button class="" id="generate-directions">Сгенерировать маршруты</button>
+            </div>
+        </div>
+    </div>
+    <div class="mask-content"></div>
+    <div id="map-container" class=""></div>
+    <div id="graph-container"></div>
+</div>
+
+<!--<div id="all-container" class="row mt-3">-->
+<!--    <div class="col-12 row">-->
+<!--        <div class="col-2">-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <p class="card-title p-0 mb-0 text-center">Nodes</p>-->
+<!--                </div>-->
+<!--                <div class="card-body p-2">-->
+<!--                    <div class="form-check col-12">-->
+<!--                        <input type="checkbox" class="form-check-input" id="editCheck1">-->
+<!--                        <label class="form-check-label" for="editCheck1">Is editable</label>-->
+<!--                    </div>-->
+<!--                    <table class="table table-sm table-bordered col-12 tnodes m-0">-->
+<!--                        <thead>-->
+<!--                        <th>id</th>-->
+<!--                        <th>name</th>-->
+<!--                        <th></th>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-4">-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <p class="card-title p-0 mb-0 text-center">Edges</p>-->
+<!--                </div>-->
+<!--                <div class="card-body p-2">-->
+<!--                    <form action="" class="col-12" id="addEdge">-->
+<!--                        <div class="row mb-2">-->
+<!--                            <div class="col">-->
+<!--                                <label>source</label>-->
+<!--                                <select id="source-nodes" class="col-12 form-control form-control-sm">-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div class="col">-->
+<!--                                <label>target</label>-->
+<!--                                <select id="target-nodes" class="col-12 form-control form-control-sm">-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                            <div class="col">-->
+<!--                                <label>button</label>-->
+<!--                                <button type="submit"-->
+<!--                                        class="btn btn-sm btn-success col-12 form-control form-control-sm">Add edge-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                    <table class="table table-sm table-bordered col-12 tedges m-0">-->
+<!--                        <thead>-->
+<!--                        <th>id</th>-->
+<!--                        <th>source</th>-->
+<!--                        <th>target</th>-->
+<!--                        <th>km</th>-->
+<!--                        <th>cars</th>-->
+<!--                        <th>bandwidth</th>-->
+<!--                        </thead>-->
+<!--                        <tbody>-->
+<!--                        </tbody>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-2">-->
+<!--            <div class="card">-->
+<!--                <div class="card-header">-->
+<!--                    <p class="card-title p-0 mb-0 text-center">Save/Load</p>-->
+<!--                </div>-->
+<!--                <div class="card-body p-2">-->
+<!--                    <div class="form-group">-->
+<!--                        <select id="seletModel" class="form-control form-control-sm"></select>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <input type="text" id="saveName" class="form-control form-control-sm">-->
+<!--                    </div>-->
+<!--                    <div class="row">-->
+<!--                        <div class="col">-->
+<!--                            <button id="saveModel" type="button" class="btn btn-sm btn-primary col-12"-->
+<!--                                    onclick="saveModel()">Save-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                        <div class="col">-->
+<!--                            <button id="loadModel" type="button" class="btn btn-sm btn-warning col-12"-->
+<!--                                    onclick="loadModel()">Load-->
+<!--                            </button>-->
+<!--                            <div>-->
+<!--                                <button onclick="runApp()">Начать симуляцию</button>-->
+<!--                                <button onclick="generateDirections()">Сгенерировать маршруты</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-2">-->
+<!--            <h3 id="worldTimer">00:00</h3>-->
+<!--            <h3 id="carsOnMap">0</h3>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
 </body>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-
 <!-- START SIGMA IMPORTS -->
 <script src="../src/sigma.core.js"></script>
 <script src="../src/conrad.js"></script>
@@ -220,39 +472,51 @@
         crossorigin="anonymous"></script>
 
 <script src="../src/scripts/sigmaInit.js"></script>
+<script src="../src/scripts/config.js"></script>
 <script src="../src/scripts/helpers.js"></script>
-<script src="../src/scripts/db.js"></script>
 <script src="../src/scripts/mapActions.js"></script>
 <script src="../src/scripts/carActions.js"></script>
 <script src="../src/scripts/main.js"></script>
 <script>
-    // Listen to some map events
-    $('#editCheck1').change(function () {
-        isEditable = !isEditable
-    });
 
-    var nodesNumber = 0;
 
-    function resetSelects() {
-        $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').empty();
-        $.each(g.nodes, (k, v) => {
-            $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').append(new Option(v.label, v.id));
-        })
-    }
+    // function resetSelects() {
+    //     $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').empty();
+    //     $.each(g.nodes, (k, v) => {
+    //         $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').append(new Option(v.label, v.id));
+    //     })
+    // }
 
     // Fit the view to the graph
-    leafletPlugin.fitBounds();
-    $(document).ready(function () {
-
-        if (localStorage && localStorage.names) {
-            modelNames = localStorage.names
-            modelNames = JSON.parse(modelNames)
-            $.each(modelNames, function (k, v) {
-                $('#seletModel').append(new Option(v, v))
-            })
-        }
-    })
+    // leafletPlugin.fitBounds();
 </script>
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.12.0/firebase.js"></script>
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyAMXNR1kB5jKbrjvWN4ksTpvPivegxy5wE",
+        authDomain: "mydiplomprj.firebaseapp.com",
+        databaseURL: "https://mydiplomprj.firebaseio.com",
+        projectId: "mydiplomprj",
+        storageBucket: "mydiplomprj.appspot.com",
+        messagingSenderId: "632598440077",
+        appId: "1:632598440077:web:59f004a5e8c87b7f019ac4"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+</script>
+<script src="../src/scripts/db.js"></script>
+<script src="../src/scripts/scenario.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>-->
+<script src="../src/scripts/chart.js"></script>
 </html>
 
 
