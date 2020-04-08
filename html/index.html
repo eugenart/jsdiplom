@@ -189,103 +189,125 @@
             по дороге в течение суток: <b id="simulation-model-intensity-b"></b>
             </span>
             <hr>
-            <div id="cars-div">
-                <button id="start-app-btn" onclick="runApp()">Начать симуляцию</button>
-                <div id="cars-div-inner">
-                    <span>Количество&nbsp;машин&nbsp;в&nbsp;городе:&nbsp;</span>
-                    <input id="cars-in-city">
+            <div class="tabs">
+                <div class="tabs__nav">
+                    <a class="tabs__link tabs__link_active" href="#content-1">Симуляция</a>
+                    <a class="tabs__link" href="#content-2">Общая информация</a>
+                    <a class="tabs__link" href="#content-3">Вершины</a>
+                    <a class="tabs__link" href="#content-4">Рёбра</a>
+                    <a class="tabs__link" href="#content-5">Отчеты</a>
                 </div>
-                <label class="container-check">Изменить граф
-                    <input type="checkbox" id="check-edit">
-                    <span class="checkmark"></span>
-                </label>
-            </div>
-            <div id="world-stat">
-                <h4>Время <b id="worldTimer">00:00</b></h4>
-                <input type="time" name="selected_time" list="time-list" id="time-input">
-                <datalist id="time-list">
-                    <option value="00:00" label="Минимальное количество машин на дорогах">
-                    <option value="01:00" label="Минимальное количество машин на дорогах">
-                    <option value="02:00">
-                    <option value="03:00">
-                    <option value="04:00">
-                    <option value="05:00">
-                    <option value="06:00" label="Появление большого количества машин на дорогах">
-                    <option value="07:00">
-                    <option value="08:00" label="Максимальное количество машин на дорогах">
-                    <option value="09:00" label="Начало рабочего дня">
-                    <option value="10:00" label="Спад активности на дорогах города">
-                    <option value="11:00" label="Малое количество машин на дорогах">
-                    <option value="12:00" label="Начало обеденного времени">
-                    <option value="13:00" label="Время обеда">
-                    <option value="14:00">
-                    <option value="15:00">
-                    <option value="16:00">
-                    <option value="17:00" label="Появление большого количества машин на дорогах">
-                    <option value="18:00" label="Максимальное количество машин на дорогах">
-                    <option value="19:00">
-                    <option value="20:00">
-                    <option value="21:00">
-                    <option value="22:00">
-                    <option value="23:00" label="Минимальное количество машин на дорогах">
-                </datalist>
-                <h4>Машин на дороге <b id="carsOnMap">0</b></h4>
-            </div>
-            <hr>
-            <span class="span-delimeter">Информация об имитационной модели: </span>
-            <div id="simulation-model-stat">
-            </div>
-            <canvas id="simulation-model-draw" width="400" height="400"></canvas>
-            <hr>
-            <span class="span-delimeter">Вершины графа: </span>
-            <div id="nodes-select">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID вершины</th>
-                        <th>Название вершины</th>
-                    </tr>
-                    </thead>
-                    <tbody id="list-nodes"></tbody>
-                </table>
-            </div>
-            <hr>
-            <span class="span-delimeter">Рёбра графа: </span>
-            <div id="edges-select">
-                <div>
-                    <label for="source-nodes">Старт</label>
-                    <select name="" id="source-nodes"></select>
+                <div class="tabs__content">
+                    <div class="tabs__pane tabs__pane_show" id="content-1">
+                        <div id="cars-div">
+                            <button id="start-app-btn" onclick="runApp()">Начать симуляцию</button>
+                            <div id="cars-div-inner">
+                                <span>Количество&nbsp;машин&nbsp;в&nbsp;городе:&nbsp;</span>
+                                <input id="cars-in-city">
+                            </div>
+                            <label class="container-check">Изменить граф
+                                <input type="checkbox" id="check-edit">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        <div id="world-stat">
+                            <h4>Время <b id="worldTimer">00:00</b></h4>
+                            <input type="time" name="selected_time" list="time-list" id="time-input">
+                            <datalist id="time-list">
+                                <option value="00:00" label="Минимальное количество машин на дорогах">
+                                <option value="01:00" label="Минимальное количество машин на дорогах">
+                                <option value="02:00">
+                                <option value="03:00">
+                                <option value="04:00">
+                                <option value="05:00">
+                                <option value="06:00" label="Появление большого количества машин на дорогах">
+                                <option value="07:00">
+                                <option value="08:00" label="Максимальное количество машин на дорогах">
+                                <option value="09:00" label="Начало рабочего дня">
+                                <option value="10:00" label="Спад активности на дорогах города">
+                                <option value="11:00" label="Малое количество машин на дорогах">
+                                <option value="12:00" label="Начало обеденного времени">
+                                <option value="13:00" label="Время обеда">
+                                <option value="14:00">
+                                <option value="15:00">
+                                <option value="16:00">
+                                <option value="17:00" label="Появление большого количества машин на дорогах">
+                                <option value="18:00" label="Максимальное количество машин на дорогах">
+                                <option value="19:00">
+                                <option value="20:00">
+                                <option value="21:00">
+                                <option value="22:00">
+                                <option value="23:00" label="Минимальное количество машин на дорогах">
+                            </datalist>
+                            <h4>Машин на дороге <b id="carsOnMap">0</b></h4>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="tabs__pane" id="content-2">
+                        <span class="span-delimeter">Информация об имитационной модели: </span>
+                        <div id="simulation-model-stat">
+                        </div>
+                        <canvas id="simulation-model-draw" width="400" height="400"></canvas>
+                        <hr>
+                    </div>
+                    <div class="tabs__pane" id="content-3">
+                        <span class="span-delimeter">Вершины графа: </span>
+                        <div id="nodes-select">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>ID вершины</th>
+                                    <th>Название вершины</th>
+                                    <th>Удаление</th>
+                                </tr>
+                                </thead>
+                                <tbody id="list-nodes"></tbody>
+                            </table>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="tabs__pane" id="content-4">
+                        <span class="span-delimeter">Рёбра графа: </span>
+                        <div id="edges-select">
+                            <div>
+                                <label for="source-nodes">Старт</label>
+                                <select name="" id="source-nodes"></select>
+                            </div>
+                            <div>
+                                <button id="addEdge">Добавить ребро</button>
+                            </div>
+                            <div>
+                                <label for="target-nodes">Финиш</label>
+                                <select name="" id="target-nodes"></select>
+                            </div>
+                        </div>
+                        <div id="edges-select-table">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>ID ребра</th>
+                                    <th>Начало ребра</th>
+                                    <th>Конец ребра</th>
+                                    <th>Редактирование</th>
+                                    <th>Удаление</th>
+                                </tr>
+                                </thead>
+                                <tbody id="list-edges"></tbody>
+                            </table>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="tabs__pane" id="content-5">
+                        <div id="all-stat">
+                            <button id="show-all-stat-btn">Посмотреть подробную статистику</button>
+                        </div>
+                        <hr>
+                        <div id="model-actions">
+                            <button class="" id="save-current-model">Сохранить модель</button>
+                            <button class="" id="generate-directions">Сгенерировать маршруты</button>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <button id="addEdge">Добавить ребро</button>
-                </div>
-                <div>
-                    <label for="target-nodes">Финиш</label>
-                    <select name="" id="target-nodes"></select>
-                </div>
-            </div>
-            <div id="edges-select-table">
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID ребра</th>
-                        <th>Начало ребра</th>
-                        <th>Конец ребра</th>
-                        <th>Редактирование</th>
-                        <th>Удаление</th>
-                    </tr>
-                    </thead>
-                    <tbody id="list-edges"></tbody>
-                </table>
-            </div>
-            <hr>
-            <div id="all-stat">
-                <button id="show-all-stat-btn">Посмотреть подробную статистику</button>
-            </div>
-            <hr>
-            <div id="model-actions">
-                <button class="" id="save-current-model">Сохранить модель</button>
-                <button class="" id="generate-directions">Сгенерировать маршруты</button>
             </div>
         </div>
     </div>
@@ -460,7 +482,7 @@
 <script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.hovers.def.js"></script>
 <script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.nodes.def.js"></script>
 <script src="../plugins/singleclick/singleclick.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sigma@1.2.1/plugins/sigma.plugins.relativeSize/sigma.plugins.relativeSize.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
         crossorigin="anonymous"></script>

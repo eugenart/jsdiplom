@@ -90,6 +90,49 @@ function loadModel() {
             let tr = document.createElement('tr');
             let td1 = document.createElement('td');
             let td2 = document.createElement('td');
+            let td3 = document.createElement('td');
+            let btn = document.createElement('button');
+
+            btn.innerText = '×';
+            btn.id = 'delete-edge-info-' + v.id;
+            btn.classList = 'delete-edge-info';
+
+            btn.addEventListener("click", ev => {
+                let newDirections = $.grep(g.directions, direction => {
+                    return !(direction.allNodes.includes(v.id));
+                });
+                showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
+                g.directions = newDirections.slice();
+                let newEdges = [];
+                let newEdgesToDelete = [];
+                newEdges = $.grep(g.edges, edge => {
+                    return !(edge.source === v.id || edge.target === v.id);
+                });
+                newEdgesToDelete = $.grep(g.edges, edge => {
+                    return (edge.source === v.id || edge.target === v.id);
+                });
+                showNotification('Удалено ' + (g.edges.length - newEdges.length) + ' ребра');
+                g.edges = newEdges.slice();
+                if (newEdgesToDelete.length) {
+                    newEdgesToDelete.forEach((value, index) => {
+                        document.getElementById('list-edges').removeChild(document.getElementById('data-edge-id-' + value.id));
+                        sigmaInstance.graph.dropEdge(value.id);
+                    });
+                }
+
+                g.nodes = $.grep(g.nodes, node => {
+                    return (node.id !== v.id);
+                });
+
+                sigmaInstance.graph.dropNode(v.id);
+                sigmaInstance.refresh();
+
+                if (g.nodes.length !== 0) {
+                    leafletPlugin.fitBounds();
+                }
+
+                tbody.removeChild(tr);
+            });
 
             nodesNumber += 1;
             sigmaInstance.graph.addNode(v);
@@ -100,8 +143,11 @@ function loadModel() {
             option.text = v.label;
             option.value = v.id;
 
+            td3.appendChild(btn);
+
             tr.appendChild(td1);
             tr.appendChild(td2);
+            tr.appendChild(td3);
 
             tbody.appendChild(tr);
 
@@ -154,7 +200,7 @@ function loadModel() {
                 edgeNewParametersQualityPavement.value = v.pavementType;
                 modalEdgeEditOuter.style.display = 'flex';
                 changeEdgeClass(v.class);
-                sayVerdict(v.reductionFactor);
+                sayVerdict(v.reductionFactor, v.speedCoefficientNerf);
                 v.isActiveEdit = true
             });
 
@@ -216,14 +262,16 @@ function loadModel() {
             btn3.classList = 'delete-edge-info';
 
             btn3.addEventListener("click", ev => {
-                console.log(v.source, v.target);
+                // console.log(v.source, v.target);
 
-                g.directions = $.grep(g.directions, direction => {
-                    return (direction.nodes.includes(v.target) || direction.nodes.includes(v.source));
+                let newDirections = $.grep(g.directions, direction => {
+                    return (!direction.edges.includes(v.id));
                 });
 
-                showNotification('Удалено ' + (g.directions.length) + ' маршрута(-ов)');
+                showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
                 showNotification('Удалено ребро ' + v.id);
+
+                g.directions = newDirections.slice();
 
                 g.edges = $.grep(g.edges, (elem) => {
                     return (elem !== v);
@@ -234,6 +282,8 @@ function loadModel() {
                 sigmaInstance.refresh();
                 leafletPlugin.fitBounds();
             });
+
+            tr.id = 'data-edge-id-' + v.id;
 
             td1.appendChild(btn);
             td4.appendChild(btn2);
@@ -251,6 +301,7 @@ function loadModel() {
         if (g.edges.length || g.nodes.length) {
             leafletPlugin.fitBounds();
             sigmaInstance.refresh()
+            sigma.plugins.relativeSize(sigmaInstance, 1);
         }
     });
 

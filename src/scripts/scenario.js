@@ -55,23 +55,31 @@ document.addEventListener('DOMContentLoaded', evt => {
                 // edge.speedCoefficientNerf = edge.speedCoefficientNerf * val.speedCoefNerf;
                 // edge.bandwidth = qualityTypes[edge.quality].coef * edge.speedCoefficientNerf;
 
+                edge.speedCoefficientNerf = edge.speedCoefficientNerf * val.speedCoefNerf;
+                edge.speedReductionFactor = qualityTypes[edge.quality].speedCoef * pavementTypes[edge.pavementType].speedCoef * edge.speedCoefficientNerf;
+
                 edge.accidentCoefficientNerf = edge.accidentCoefficientNerf * val.bandwidthCoefNerf;
                 edge.reductionFactor = qualityTypes[edge.quality].coef * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
-                edge.fullLength = qualityTypes[edge.quality].coef * roadClasses[edge.class].laneNumber * edge.distance * 1000 * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
 
+                edge.fullLength = qualityTypes[edge.quality].coef * roadClasses[edge.class].laneNumber * edge.distance * 1000 * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
+                edge.bandwidth = qualityTypes[edge.quality].coef * edge.speedCoefficientNerf;
 
             } else {
                 edge.hasAccidents[index].has = 0;
 
                 // edge.bandwidth = qualityTypes[edge.quality].coef / edge.speedCoefficientNerf;
                 // edge.speedCoefficientNerf = edge.speedCoefficientNerf / val.speedCoefNerf;
-
+                edge.speedCoefficientNerf = edge.speedCoefficientNerf / val.speedCoefNerf;
                 edge.accidentCoefficientNerf = edge.accidentCoefficientNerf / val.bandwidthCoefNerf;
+
                 edge.reductionFactor = qualityTypes[edge.quality].coef * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
                 edge.fullLength = qualityTypes[edge.quality].coef * roadClasses[edge.class].laneNumber * edge.distance * 1000 * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
+
+                edge.speedReductionFactor = qualityTypes[edge.quality].speedCoef * pavementTypes[edge.pavementType].speedCoef * edge.speedCoefficientNerf;
+                edge.bandwidth = qualityTypes[edge.quality].coef * edge.speedCoefficientNerf;
             }
-            console.log(edge.reductionFactor, edge.accidentCoefficientNerf, edge.fullLength);
-            sayVerdict(edge.reductionFactor);
+            console.log(edge.bandwidth, edge.speedReductionFactor);
+            sayVerdict(edge.reductionFactor, edge.speedReductionFactor);
         });
     })
 
@@ -498,7 +506,16 @@ function changeEdgeClass(edgeNewParametersQuality) {
 
 document.getElementById('edge-new-parameters-quality').addEventListener("change", ev => {
     let edgeNewParametersQuality = document.getElementById('edge-new-parameters-quality').value;
+    let edge = $.grep(g.edges, function (item) {
+        return (item.isActiveEdit === true)
+    });
+    edge = edge[0];
+    console.log(edge.class);
     changeEdgeClass(edgeNewParametersQuality);
+    edge.class = edgeNewParametersQuality;
+    edge.size = roadClasses[edge.class].laneNumber;
+    console.log(edge.class);
+    sigmaInstance.refresh();
 });
 
 document.getElementById('edge-new-parameters-quality-pavement').addEventListener("change", ev => {
@@ -509,18 +526,25 @@ document.getElementById('edge-new-parameters-quality-pavement').addEventListener
     edge.class = document.getElementById('edge-new-parameters-quality').value;
     edge.quality = document.getElementById('edge-new-parameters-quality-quality').value;
     edge.pavementType = document.getElementById('edge-new-parameters-quality-pavement').value;
-    edge.bandwidth = qualityTypes[edge.quality].coef;
+
     edge.accidentCoefficientNerf = 1;
     edge.hasAccidents.forEach((value, index) => {
         if (value.has === 1) {
             edge.accidentCoefficientNerf = edge.accidentCoefficientNerf * roadAccidents[index].bandwidthCoefNerf;
+            edge.speedCoefficientNerf = edge.speedCoefficientNerf * roadAccidents[index].speedCoefNerf;
         }
     });
+    edge.bandwidth = qualityTypes[edge.quality].coef * edge.speedCoefficientNerf;
+    edge.speedReductionFactor = qualityTypes[edge.quality].speedCoef * pavementTypes[edge.pavementType].speedCoef * edge.speedCoefficientNerf;
+
     edge.fullLength = qualityTypes[edge.quality].coef * roadClasses[edge.class].laneNumber * edge.distance * 1000 * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
     edge.reductionFactor = qualityTypes[edge.quality].coef * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
-    console.log(qualityTypes[edge.quality].coef, pavementTypes[edge.pavementType].coef, edge.reductionFactor, edge.accidentCoefficientNerf);
-    sayVerdict(edge.reductionFactor)
+
+    console.log(edge.bandwidth, edge.speedReductionFactor);
+    sayVerdict(edge.reductionFactor, edge.speedReductionFactor)
 });
+
+//     console.log(edge.bandwidth, edge.speedCoefficientNerf);
 
 document.getElementById('edge-new-parameters-quality-quality').addEventListener("change", ev => {
     let edge = $.grep(g.edges, function (item) {
@@ -530,24 +554,32 @@ document.getElementById('edge-new-parameters-quality-quality').addEventListener(
     edge.class = document.getElementById('edge-new-parameters-quality').value;
     edge.quality = document.getElementById('edge-new-parameters-quality-quality').value;
     edge.pavementType = document.getElementById('edge-new-parameters-quality-pavement').value;
-    edge.bandwidth = qualityTypes[edge.quality].coef;
+
     edge.accidentCoefficientNerf = 1;
     edge.hasAccidents.forEach((value, index) => {
         if (value.has === 1) {
             edge.accidentCoefficientNerf = edge.accidentCoefficientNerf * roadAccidents[index].bandwidthCoefNerf;
+            edge.speedCoefficientNerf = edge.speedCoefficientNerf * roadAccidents[index].speedCoefNerf;
             console.log(value.name)
         }
     });
+    edge.bandwidth = qualityTypes[edge.quality].coef * edge.speedCoefficientNerf;
+    edge.speedReductionFactor = qualityTypes[edge.quality].speedCoef * pavementTypes[edge.pavementType].speedCoef * edge.speedCoefficientNerf;
+
     edge.fullLength = qualityTypes[edge.quality].coef * roadClasses[edge.class].laneNumber * edge.distance * 1000 * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
     edge.reductionFactor = qualityTypes[edge.quality].coef * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
-    console.log(qualityTypes[edge.quality].coef, pavementTypes[edge.pavementType].coef, edge.reductionFactor, edge.accidentCoefficientNerf);
-    sayVerdict(edge.reductionFactor)
+
+    console.log(edge.bandwidth, edge.speedReductionFactor);
+    sayVerdict(edge.reductionFactor, edge.speedReductionFactor);
+    sigmaInstance.refresh();
 });
 
-function sayVerdict(coef) {
+function sayVerdict(coef, speedCoef) {
     let p = document.getElementById('edge-reduction-factor-verdict');
     let code = document.createElement('code');
+    let codeSpeed = document.createElement('code');
     let b = document.createElement('b');
+    let bSpeed = document.createElement('b');
 
     if (coef !== 1) {
         coef = ((1 - coef) * 100).toFixed(1);
@@ -565,6 +597,97 @@ function sayVerdict(coef) {
         code.appendChild(b);
         p.append(code, p1);
         //
-
+    }
+    if (speedCoef !== 1) {
+        let span = document.createElement('span');
+        let span2 = document.createElement('span');
+        let p2 = document.createElement('p');
+        span.style.fontSize = '16px';
+        span2.style.fontSize = '16px';
+        span.innerText = ' и уменьшат на ';
+        bSpeed.style.color = 'red';
+        bSpeed.innerText = ((1 - speedCoef) * 100).toFixed(1) + '% ';
+        codeSpeed.appendChild(bSpeed);
+        span2.innerText += ' скорость автомобилей на нём';
+        p2.append(span, codeSpeed, span2);
+        p.appendChild(p2)
+    } else {
+        let span = document.createElement('span');
+        let span2 = document.createElement('span');
+        let p2 = document.createElement('p');
+        span.style.fontSize = '16px';
+        span2.style.fontSize = '16px';
+        span.innerText = ' и ';
+        bSpeed.style.color = 'green';
+        bSpeed.innerText = 'не уменьшат ';
+        codeSpeed.appendChild(bSpeed);
+        span2.innerText += ' скорость автомобилей на нём';
+        p2.append(span, codeSpeed, span2);
+        p.appendChild(p2)
     }
 }
+
+var tabs = (function () {
+    return function (selector, config) {
+        var
+            _tabsContainer = (typeof selector === 'string' ? document.querySelector(selector) : selector);
+
+        var _showTab = function (tabsLinkTarget) {
+            var tabsPaneTarget, tabsLinkActive, tabsPaneShow;
+            tabsPaneTarget = document.querySelector(tabsLinkTarget.getAttribute('href'));
+            tabsLinkActive = tabsLinkTarget.parentElement.querySelector('.tabs__link_active');
+            tabsPaneShow = tabsPaneTarget.parentElement.querySelector('.tabs__pane_show');
+            // если следующая вкладка равна активной, то завершаем работу
+            if (tabsLinkTarget === tabsLinkActive) {
+                return;
+            }
+            // удаляем классы у текущих активных элементов
+            if (tabsLinkActive !== null) {
+                tabsLinkActive.classList.remove('tabs__link_active');
+            }
+            if (tabsPaneShow !== null) {
+                tabsPaneShow.classList.remove('tabs__pane_show');
+            }
+            // добавляем классы к элементам (в завимости от выбранной вкладки)
+            tabsLinkTarget.classList.add('tabs__link_active');
+            tabsPaneTarget.classList.add('tabs__pane_show');
+            var eventTabShow = new CustomEvent('tab.show', {bubbles: true, detail: {tabsLinkPrevious: tabsLinkActive}});
+            tabsLinkTarget.dispatchEvent(eventTabShow);
+        }
+
+        var _switchTabTo = function (tabsLinkIndex) {
+            var tabsLinks = _tabsContainer.querySelectorAll('.tabs__link');
+            if (tabsLinks.length > 0) {
+                if (tabsLinkIndex > tabsLinks.length) {
+                    tabsLinkIndex = tabsLinks.length;
+                } else if (tabsLinkIndex < 1) {
+                    tabsLinkIndex = 1;
+                }
+                _showTab(tabsLinks[tabsLinkIndex - 1]);
+            }
+        }
+
+        var _setupListeners = function () {
+            _tabsContainer.addEventListener('click', function (e) {
+                var tabsLinkTarget = e.target;
+                // завершаем выполнение функции, если кликнули не по ссылке
+                if (!tabsLinkTarget.classList.contains('tabs__link')) {
+                    return;
+                }
+                // отменяем стандартное действие
+                e.preventDefault();
+                _showTab(tabsLinkTarget);
+            });
+        }
+
+        _setupListeners();
+
+        return {
+            switchTabTo: function (index) {
+                _switchTabTo(index);
+            }
+        }
+    }
+}());
+
+tabs('.tabs');

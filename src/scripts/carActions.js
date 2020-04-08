@@ -71,7 +71,7 @@ function roadtrip(index, route, start = null, number = 0) {
     if (!currentEdge) {
         console.log(cars[index]);
     }
-    cars[index].speed = randomInteger(roadClasses[currentEdge.class].minSpeed, roadClasses[currentEdge.class].maxSpeed) * currentEdge.bandwidth * pavementTypes[currentEdge.pavementType].coef;
+    cars[index].speed = randomInteger(roadClasses[currentEdge.class].minSpeed, roadClasses[currentEdge.class].maxSpeed) * currentEdge.bandwidth;
     let edgeTime = (currentEdge.distance / (cars[index].speed)) * 60 * minuteVsReal;
 
     refreshEdge(currentEdge, cars[index]);
@@ -111,7 +111,7 @@ function refreshEdge(currentEdge, car, enter = true) {
         if (edge.drawing[hours][hours]["maxLoad"] < edge.load) {
             edge.drawing[hours][hours]["maxLoad"] = edge.load
         }
-        // console.log(edge.load, edge.fullLength)
+        console.log(edge.load, edge.fullLength)
     } else {
         edge.cars -= 1;
         edge.load -= car.length + car.distanceBetweenCars
@@ -127,7 +127,7 @@ function refreshEdge(currentEdge, car, enter = true) {
 function redrawEdge() {
     $.each(g.edges, (k, edge) => {
         let loadCoef = edge.load / edge.fullLength;
-        console.log(edge.load, edge.fullLength);
+        // console.log(edge.load, edge.fullLength);
         if (edge.cars === 0) {
             edge.color = 'black';
         } else if (loadCoef > 0 && loadCoef < 0.25) {
@@ -176,7 +176,7 @@ function generateDirections() {
         tempArr.forEach((finish) => {
             if (start !== finish) {
                 generateDirection(start, finish);
-                console.log(g.directions.length);
+                // console.log(g.directions.length);
                 // spanDirections.innerText = 'Сгенерировано маршрутов: ' + g.directions.length;
             }
         });
@@ -200,6 +200,21 @@ function generateDirection(start, finish) {
         finish: finish.id,
         distance: distance,
         nodes: route,
+        edges: [],
+        allNodes: []
     };
+    let tempNodes = newDirection.nodes.slice();
+    tempNodes.unshift(start.id);
+    newDirection.allNodes = tempNodes.slice();
+    //console.log(tempNodes);
+    for (let i = 0; i <= tempNodes.length - 1; ++i) {
+        let edge = $.grep(g.edges, function (item) {
+            return ((item.source === tempNodes[i] && item.target === tempNodes[i + 1]) || (item.target === tempNodes[i] && item.source === tempNodes[i + 1]))
+        });
+        edge = edge[0];
+        if (edge) {
+            newDirection.edges.push(edge.id);
+        }
+    }
     g.directions.push(newDirection);
 }

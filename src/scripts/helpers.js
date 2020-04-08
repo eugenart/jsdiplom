@@ -19,7 +19,7 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
 
 function dijkstra(startP, endP) {
     let matrix = g.edges.slice();
-    let fullMatrix = matrix.slice()
+    let fullMatrix = matrix.slice();
     let weights = {};
     let prevRoutes = {};
     let route = [endP];
@@ -33,14 +33,15 @@ function dijkstra(startP, endP) {
         }
     });
     $.each(g.nodes, function (k, v) {
-        weights[v.id] = null
+        weights[v.id] = null;
         prevRoutes[v.id] = null
     });
-    let result = nextNode(fullMatrix, weights, startP, startP, prevRoutes)
+    let result = nextNode(fullMatrix, weights, startP, startP, prevRoutes);
     weights = result[0];
     prevRoutes = result[1];
-    route = prevPoint(endP, prevRoutes, route)
-    route.reverse()
+    route = prevPoint(endP, prevRoutes, route);
+ //   console.log(route);
+    route.reverse();
     return [weights[endP], route]
 }
 

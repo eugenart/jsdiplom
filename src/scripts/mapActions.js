@@ -15,17 +15,64 @@ map.on('click', function (e) {
         let td1 = document.createElement('td');
         let td2 = document.createElement('td');
         let tbody = document.getElementById('list-nodes');
+        let td3 = document.createElement('td');
+        let btn = document.createElement('button');
+
+        btn.innerText = '×';
+        btn.id = 'delete-edge-info-' + newNode.id;
+        btn.classList = 'delete-edge-info';
+
         let simulationModelStat = document.getElementById('simulation-model-stat');
 
         simulationModelStat.children[0].children[0].innerText = nodesNumber;
 
         sigmaInstance.graph.addNode(newNode);
 
+        btn.addEventListener("click", ev => {
+            let newDirections = $.grep(g.directions, direction => {
+                return !(direction.allNodes.includes(newNode.id));
+            });
+            showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
+            g.directions = newDirections.slice();
+            let newEdges = [];
+            let newEdgesToDelete = [];
+            newEdges = $.grep(g.edges, edge => {
+                return !(edge.source === newNode.id || edge.target === newNode.id);
+            });
+            newEdgesToDelete = $.grep(g.edges, edge => {
+                return (edge.source === newNode.id || edge.target === newNode.id);
+            });
+            showNotification('Удалено ' + (g.edges.length - newEdges.length) + ' ребра');
+            g.edges = newEdges.slice();
+            if (newEdgesToDelete.length) {
+                newEdgesToDelete.forEach((value, index) => {
+                    document.getElementById('list-edges').removeChild(document.getElementById('data-edge-id-' + value.id));
+                    sigmaInstance.graph.dropEdge(value.id);
+                });
+            }
+
+            g.nodes = $.grep(g.nodes, node => {
+                return (node.id !== newNode.id);
+            });
+
+            sigmaInstance.graph.dropNode(newNode.id);
+            sigmaInstance.refresh();
+
+            if (g.nodes.length !== 0) {
+                leafletPlugin.fitBounds();
+                sigma.plugins.relativeSize(sigmaInstance, 1);
+            }
+
+            tbody.removeChild(tr);
+        });
+
         td1.innerText = newNode.id;
         td2.innerText = newNode.label;
 
+        td3.appendChild(btn);
         tr.appendChild(td1);
         tr.appendChild(td2);
+        tr.appendChild(td3);
         tbody.appendChild(tr);
 
         $('#source-nodes, #target-nodes').append(new Option(newNode.label, newNode.id));
@@ -61,6 +108,7 @@ map.on('click', function (e) {
         leafletPlugin.syncNodes((newNode.id).toString());
         // Fit the view to the graph
         leafletPlugin.fitBounds();
+        sigma.plugins.relativeSize(sigmaInstance, 1);
     }
 });
 
@@ -79,8 +127,10 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         pavementType: 1,
         quality: 2,//randomInteger(1, 5),
         load: 0,
+        size: 0,
         cars: 0,
         reductionFactor: 1,
+        speedReductionFactor: 1,
         accidentCoefficientNerf: 1,
         speedCoefficientNerf: 1,
         hasAccidents: [
@@ -116,10 +166,13 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         ],
     };
 
-    newEdge.bandwidth = qualityTypes[newEdge.quality].coef;
+    newEdge.bandwidth = qualityTypes[newEdge.quality].coef * pavementTypes[newEdge.pavementType].speedCoef * qualityTypes[newEdge.quality].speedCoef * newEdge.speedCoefficientNerf;
     newEdge.fullLength = roadClasses[newEdge.class].laneNumber * newEdge.distance * 1000;
 
     newEdge.reductionFactor = qualityTypes[newEdge.quality].coef * pavementTypes[newEdge.pavementType].coef * newEdge.accidentCoefficientNerf;
+    newEdge.speedReductionFactor = pavementTypes[newEdge.pavementType].speedCoef * qualityTypes[newEdge.quality].speedCoef * newEdge.speedCoefficientNerf;
+
+    newEdge.size = roadClasses[newEdge.class].laneNumber;
 
     let tbodyEdges = document.getElementById('list-edges');
     let tr = document.createElement('tr');
@@ -154,23 +207,28 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
     btn3.id = 'delete-edge-info-' + newEdge.id;
     btn3.classList = 'delete-edge-info';
 
-    // btn3.addEventListener("click", ev => {
-    //     let newDirections = $.grep(g.directions, (elem) => {
-    //         return (elem.nodes.indexOf(newEdge.source) || elem.nodes.indexOf(newEdge.target));
-    //     });
-    //     showNotification('Удалено ' + newDirections.length + ' маршрута(-ов)');
-    //     showNotification('Удалено ребро ' + newEdge.id);
-    //     g.directions = newDirections;
-    //     g.edges = $.grep(g.edges, (elem) => {
-    //         return (elem !== newEdge);
-    //     });
-    //     tbodyEdges.removeChild(tr);
-    //     console.log(newDirections);
-    //
-    //     sigmaInstance.graph.dropEdge(newEdge.id);
-    //     sigmaInstance.refresh();
-    //     leafletPlugin.fitBounds();
-    // });
+    btn3.addEventListener("click", ev => {
+
+        let newDirections = $.grep(g.directions, direction => {
+            return (!direction.edges.includes(newEdge.id));
+        });
+
+        showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
+        showNotification('Удалено ребро ' + newEdge.id);
+
+        g.directions = newDirections;
+
+        g.edges = $.grep(g.edges, (elem) => {
+            return (elem !== newEdge);
+        });
+        tbodyEdges.removeChild(tr);
+
+        sigmaInstance.graph.dropEdge(newEdge.id);
+        sigma.plugins.relativeSize(sigmaInstance, 1);
+        sigmaInstance.refresh();
+        leafletPlugin.fitBounds();
+    });
+
 
     btn2.addEventListener("click", ev => {
         let modalEdgeEditOuter = document.getElementById('modal-edge-edit-outer');
@@ -189,7 +247,7 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         edgeNewParametersQualityPavement.value = newEdge.pavementType;
         modalEdgeEditOuter.style.display = 'flex';
         changeEdgeClass(newEdge.class);
-        sayVerdict(newEdge.reductionFactor);
+        sayVerdict(newEdge.reductionFactor, newEdge.speedReductionFactor);
         newEdge.isActiveEdit = true
     });
 
@@ -243,7 +301,7 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
 
         if (newEdge.isActive) {
             edgeRefreshInterval = setInterval(() => {
-                updateEdgeRadarChart(newEdge.drawing[hours][hours].overload, hours, edgeRadarChart);
+                updateEdgeRadarChart(newEdge.drawing[hours][hours]["maxLoad"], hours, edgeRadarChart);
                 updateChartForEdge(newEdge.drawing[hours][hours].carsAmount, hours, modalEdgeCanvas);
                 updateBarChartForEdge(newEdge.drawing[hours][hours].overload, hours, barChartForEdge);
                 console.log(newEdge.drawing[hours][hours].carsAmount, newEdge.id)
@@ -251,6 +309,8 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         }
         // edgeInfo
     });
+
+    tr.id = 'data-edge-id-' + newEdge.id;
 
     td1.appendChild(btn);
     td4.appendChild(btn2);
@@ -267,5 +327,6 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
     simulationModelStat.children[1].children[0].innerText = g.edges.length;
     sigmaInstance.refresh();
     leafletPlugin.fitBounds();
+    sigma.plugins.relativeSize(sigmaInstance, 1);
     showNotification('Ребро успешно добавлено');
 });

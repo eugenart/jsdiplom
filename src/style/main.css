@@ -99,6 +99,64 @@ body * {
     }
 }
 
+.tabs {
+    max-width: 100%;
+    width: 100%;
+    margin: 20px 0;
+}
+.tabs__nav {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    order: 0;
+    white-space: nowrap;
+    background-color: #fff;
+    border: 1px solid #e3f2fd;
+    box-shadow: 0 2px 4px 0 #e3f2fd;
+}
+
+.tabs__nav>a {
+    display: inline-block;
+    text-decoration: none;
+    padding: 6px 10px;
+    text-align: center;
+    color: #041e42;
+}
+
+.tabs__link {
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    text-align: center;
+    flex-shrink: 0;
+    flex-grow: 1;
+}
+
+.tabs__link_active {
+    background: rgba(255, 113, 75, 0.6);
+    cursor: default;
+}
+
+.tabs__link:not(.tabs__link_active):hover,
+.tabs__link:not(.tabs__link_active):focus {
+    background: rgba(255, 113, 75, 0.3)
+}
+
+.tabs__content {
+    padding: 1rem;
+}
+
+.tabs__pane {
+    display: none;
+}
+
+.tabs__pane_show {
+    display: block;
+}
+
 #models {
     flex-wrap: wrap;
     list-style: none;
@@ -280,6 +338,12 @@ body * {
     box-shadow: 0 1px 10px 0 rgba(255, 255, 255, 0.1);
 }
 
+#modal-edge-edit {
+    height: 90vh;
+    overflow-y: scroll;
+    max-height: 90vh;
+}
+
 #confirm_modal_header, #model-modal-header, #modal-edge-header, #generate-directions-modal-header, #modal-edge-edit-header {
     background-color: #ff714b;
     border-top-left-radius: inherit;
@@ -394,6 +458,10 @@ body * {
     border: none;
     border-bottom: 2px solid #ff714b;
     color: #041e42;
+}
+
+#edge-reduction-factor-verdict p {
+    margin: 0;
 }
 
 .edit-edge-info {
