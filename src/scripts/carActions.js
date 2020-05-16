@@ -92,8 +92,6 @@ function roadtrip(index, route, start = null, number = 0) {
             while (cars[index].route.finish.id === cars[index].route.start.id) {
                 cars[index].route.finish = nodes[Math.floor(Math.random() * nodes.length)];
             }
-            // console.log(cars[index].number + ' ' + cars[index].onRoad + ' прибыла в пункт назначения!');
-            // console.log(cars[index]);
         }
 
     }, edgeTime)
@@ -111,7 +109,7 @@ function refreshEdge(currentEdge, car, enter = true) {
         if (edge.drawing[hours][hours]["maxLoad"] < edge.load) {
             edge.drawing[hours][hours]["maxLoad"] = edge.load
         }
-        console.log(edge.load, edge.fullLength)
+        //console.log(edge.load, edge.fullLength)
     } else {
         edge.cars -= 1;
         edge.load -= car.length + car.distanceBetweenCars
@@ -136,24 +134,14 @@ function redrawEdge() {
             edge.color = 'yellow';
         } else if (loadCoef >= 0.5 && loadCoef < 0.75) {
             edge.color = 'orange';
-        } else if (loadCoef >= 0.75 && loadCoef <= 1) {
+        } else if (loadCoef >= 0.75 && loadCoef <= 0.9) {
             edge.color = 'red';
-        } else if (loadCoef > 1) {
+        } else if (loadCoef >= 0.9) {
             edge.color = 'pink';
             console.log('перегруз ' + edge.id);
             edge.drawing[hours][hours].overload += 1.67;
+            edge.points += 0.017
         }
-
-
-        // if (edge.cars === 0) {
-        //     edge.color = 'black';
-        // } else if (edge.cars <= 100) {
-        //     edge.color = 'green';
-        // } else if (edge.cars > 100 && edge.cars < 200) {
-        //     edge.color = 'blue';
-        // } else {
-        //     edge.color = 'red';
-        // }
         sigmaInstance.refresh();
     })
 }

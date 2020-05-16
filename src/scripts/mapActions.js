@@ -1,9 +1,68 @@
+sigmaInstance.bind("clickEdge", function (e) {
+    let currentEdge = e.data.edge
+    let edgeInfoOuter = document.getElementById('modal-edge-info-outer');
+    let edgeInfo = document.getElementById('modal-edge-info');
+    let modalEdgeBodyLength = document.getElementById('modal-edge_body-length');
+    let modalEdgeBodyLane = document.getElementById('modal-edge_body-lane');
+    let modalEdgeBodyQuality = document.getElementById('modal-edge_body-quality');
+    let modalEdgeProgress = document.getElementById('modal-edge-progress');
+    let modalEdgeBody = document.getElementById('modal-edge_body');
+    let modalEdgeBodyTypeName = document.getElementById('modal-edge_body-type-name');
+    let modalEdgeBodyTypeGround = document.getElementById('modal-edge_body-type-ground');
+    let modalEdgeBodyTypeMinSpeed = document.getElementById('modal-edge_body-type-min-speed');
+    let modalEdgeBodyTypeMaxSpeed = document.getElementById('modal-edge_body-type-max-speed');
+
+
+    modalEdgeBodyTypeName.innerText = roadClasses[currentEdge.class].name;
+
+    modalEdgeBodyTypeGround.innerText = pavementTypes[currentEdge.pavementType].name;
+    modalEdgeBodyTypeMinSpeed.innerText = roadClasses[currentEdge.class].minSpeed + ' км/ч';
+    modalEdgeBodyTypeMaxSpeed.innerText = roadClasses[currentEdge.class].maxSpeed + ' км/ч';
+
+    edgeInfoOuter.style.display = 'flex';
+    modalEdgeBodyLength.innerText = currentEdge.distance.toFixed(2) + 'км.';
+    modalEdgeBodyLane.innerText = roadClasses[currentEdge.class].laneNumber;
+    modalEdgeBodyQuality.innerText = qualityTypes[currentEdge.quality].name;
+    currentEdge.isActive = true;
+
+    if (edgeInfoOuter.style.display === 'flex') {
+        modalEdgeProgress.max = currentEdge.fullLength;
+        modalEdgeProgress.value = currentEdge.load;
+    }
+    let edgeLabels = [];
+    let edgeData = [];
+    let edgeDataOverload = [];
+    let edgeDataFullLength = [];
+    let edgeDataHoursMaxLoad = [];
+    console.log(currentEdge.fullLength);
+    currentEdge.drawing.forEach((val, k) => {
+        edgeLabels.push(val[k].time + ':00');
+        edgeData.push(val[k].carsAmount);
+        edgeDataOverload.push(val[k].overload);
+        edgeDataFullLength.push(currentEdge.fullLength);
+        edgeDataHoursMaxLoad.push(val[k].maxLoad);
+    });
+
+    drawChartForEdge(edgeLabels, edgeData, modalEdgeCanvas);
+    drawBarChartForEdge(edgeLabels, edgeDataOverload, barChartForEdge);
+    drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeDataHoursMaxLoad, edgeRadarChart);
+
+    if (currentEdge.isActive) {
+        edgeRefreshInterval = setInterval(() => {
+            updateEdgeRadarChart(currentEdge.drawing[hours][hours]["maxLoad"], hours, edgeRadarChart);
+            updateChartForEdge(currentEdge.drawing[hours][hours].carsAmount, hours, modalEdgeCanvas);
+            updateBarChartForEdge(currentEdge.drawing[hours][hours].overload, hours, barChartForEdge);
+            console.log(currentEdge.drawing[hours][hours].carsAmount, currentEdge.id)
+        }, 1500);
+    }
+});
+
 map.on('click', function (e) {
     if (isEditable) {
         nodesNumber += 1;
         let newNode = {
             id: 'n' + nodesNumber,
-            label: 'node' + nodesNumber,
+            label: 'Node №' + nodesNumber,
             x: Math.random(),
             y: Math.random(),
             lat: e.latlng.lat, // mandatory field
@@ -32,6 +91,7 @@ map.on('click', function (e) {
             let newDirections = $.grep(g.directions, direction => {
                 return !(direction.allNodes.includes(newNode.id));
             });
+            $(`#source-nodes option[value=${v.id}], #target-nodes option[value=${v.id}`).remove();
             showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
             g.directions = newDirections.slice();
             let newEdges = [];
@@ -76,34 +136,6 @@ map.on('click', function (e) {
         tbody.appendChild(tr);
 
         $('#source-nodes, #target-nodes').append(new Option(newNode.label, newNode.id));
-        //$('#start-nodes, #finish-nodes').append(new Option(newNode.label, newNode.id));
-        // a = $('<a class="node-link" href="#" data-node="' + newNode.id + '">X</a>');
-        // a.click(function () {
-        //     g.edges = $.grep(g.edges, (function (elem) {
-        //         if (elem.target === newNode.id || elem.source === newNode.id) {
-        //             $('.tedges').find('tr[data-trEdgeTarget="' + newNode.id + '"]').remove()
-        //             $('.tedges').find('tr[data-trEdgeSource="' + newNode.id + '"]').remove()
-        //             return false
-        //         } else {
-        //             return true
-        //         }
-        //     }));
-        //
-        //     let nodeValue = $(this).data('node');
-        //
-        //     g.nodes = $.grep(g.nodes, function (item) {
-        //         return (nodeValue !== item.id)
-        //     })
-        //
-        //     g.edges = $.grep(g.edges, function (item, i) {
-        //         return (nodeValue !== item.id)
-        //     })
-
-        //     sigmaInstance.graph.dropNode($(this).data('node'));
-        //     leafletPlugin.syncNodes();
-        //     $(this).closest('tr').remove();
-        //     resetSelects();
-        // });
         g.nodes.push(newNode);
         leafletPlugin.syncNodes((newNode.id).toString());
         // Fit the view to the graph
@@ -119,6 +151,7 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
     distance = distanceInKmBetweenEarthCoordinates(sNode.lat, sNode.lng, tNode.lat, tNode.lng);
     let newEdge = {
         id: 'e' + g.edges.length,
+        label: 'Edge ' + g.edges.length,
         source: sNode.id,
         target: tNode.id,
         distance: distance,
@@ -127,6 +160,7 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         pavementType: 1,
         quality: 2,//randomInteger(1, 5),
         load: 0,
+        points: 0,
         size: 0,
         cars: 0,
         reductionFactor: 1,
@@ -245,6 +279,12 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         edgeNewParametersQuality.value = newEdge.class;
         edgeNewParametersQualityQuality.value = newEdge.quality;
         edgeNewParametersQualityPavement.value = newEdge.pavementType;
+
+        roadAccidents.forEach((val, index) => {
+            let check = document.getElementById('accident-' + index);
+            check.checked = !!newEdge.hasAccidents[index].has;
+        })
+
         modalEdgeEditOuter.style.display = 'flex';
         changeEdgeClass(newEdge.class);
         sayVerdict(newEdge.reductionFactor, newEdge.speedReductionFactor);
@@ -287,17 +327,19 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
         let edgeData = [];
         let edgeDataOverload = [];
         let edgeDataFullLength = [];
+        let edgeDataHoursMaxLoad = [];
         console.log(newEdge.fullLength);
         newEdge.drawing.forEach((val, k) => {
             edgeLabels.push(val[k].time + ':00');
             edgeData.push(val[k].carsAmount);
             edgeDataOverload.push(val[k].overload);
             edgeDataFullLength.push(newEdge.fullLength);
+            edgeDataHoursMaxLoad.push(val[k].maxLoad);
         });
 
         drawChartForEdge(edgeLabels, edgeData, modalEdgeCanvas);
         drawBarChartForEdge(edgeLabels, edgeDataOverload, barChartForEdge);
-        drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeRadarChart);
+        drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeDataHoursMaxLoad, edgeRadarChart);
 
         if (newEdge.isActive) {
             edgeRefreshInterval = setInterval(() => {

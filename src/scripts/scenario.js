@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', evt => {
                 return (item.isActiveEdit === true)
             });
             edge = edge[0];
+
             if (edge.hasAccidents[index].has === 0) {
                 edge.hasAccidents[index].has = 1;
 
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', evt => {
 
             } else {
                 edge.hasAccidents[index].has = 0;
-
+                edge.points = 0;
                 // edge.bandwidth = qualityTypes[edge.quality].coef / edge.speedCoefficientNerf;
                 // edge.speedCoefficientNerf = edge.speedCoefficientNerf / val.speedCoefNerf;
                 edge.speedCoefficientNerf = edge.speedCoefficientNerf / val.speedCoefNerf;
@@ -186,11 +187,13 @@ document.getElementById('modal-edge-edit-footer-confirm').addEventListener("clic
     edge.reductionFactor = qualityTypes[edge.quality].coef * pavementTypes[edge.pavementType].coef * edge.accidentCoefficientNerf;
     let edgeDataFullLength = [];
     let edgeLabels = [];
+    let edgeDataHoursMaxLoad = [];
     edge.drawing.forEach((val, k) => {
         edgeLabels.push(val[k].time + ':00');
         edgeDataFullLength.push(edge.fullLength);
+        edgeDataHoursMaxLoad.push(val[k].maxLoad);
     });
-    drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeRadarChart);
+    drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeDataHoursMaxLoad, edgeRadarChart);
     edge.isActiveEdit = false;
     showNotification('Изменения сохранены')
 });
@@ -382,9 +385,17 @@ document.getElementById('all-stat-footer-cancel').addEventListener("click", ev =
     clearInterval(canvasArrayInterval);
 });
 
+document.getElementById('recommendations-cancel').addEventListener("click", ev => {
+    document.getElementById('recommendations-outer').style.display = 'none';
+    document.getElementById('nav-toggle').checked = false;
+    document.getElementById('map-container').style.visibility = 'visible';
+    document.getElementById('graph-container').style.visibility = 'visible';
+});
+
+
 document.getElementById('start-app-btn').addEventListener("click", ev => {
     let statBody = document.getElementById('all-stat-body');
-
+    document.getElementById('stat-widget').style.display = 'block';
     if (!wasFilled) {
         wasFilled = true;
         g.edges.forEach((value, index) => {
@@ -443,14 +454,71 @@ document.getElementById('show-all-stat-btn').addEventListener("click", ev => {
     document.getElementById('graph-container').style.visibility = 'hidden';
 });
 
+document.getElementById('show-recommendations').addEventListener("click", ev => {
+    document.getElementById('recommendations-outer').style.display = 'block';
+    document.getElementById('nav-toggle').checked = false;
+    document.getElementById('map-container').style.visibility = 'hidden';
+    document.getElementById('graph-container').style.visibility = 'hidden';
+
+    let container = document.getElementById('edges-with-points');
+    container.innerHTML = '';
+    let i = 1;
+    g.edges.forEach((value, index) => {
+        let changeRoute = true;
+        if (value.points > 1) {
+            let p = document.createElement('p');
+            p.style.color = '#041e42';
+            p.style.fontWeight = 'bold';
+            p.style.margin = '0';
+            p.innerText = i + ') Возможные пути увеличения пропускной способности ребра ' + value.id;
+            container.appendChild(p);
+            let ul = document.createElement('ul');
+            if (changeRoute) {
+                if (value.quality !== "0") {
+                    let li = document.createElement('li');
+                    li.innerText = `Улучшить качество дороги до состояния "${qualityTypes[value.quality - 1].name}"`
+                    ul.appendChild(li)
+                    changeRoute = false;
+                }
+                if (value.pavementType !== "0") {
+                    let li = document.createElement('li');
+                    li.innerText = `Улучшить тип дорожного покрытия на "${pavementTypes[value.quality - 1].name}"`
+                    ul.appendChild(li)
+                    changeRoute = false;
+                }
+                value.hasAccidents.forEach((v, k) => {
+                    if (v.has) {
+                        let li = document.createElement('li');
+                        li.innerText = `Устранить дорожную ситуацию "${v.name}"`
+                        ul.appendChild(li)
+                        changeRoute = false;
+                    }
+                })
+                if (value.class !== '0') {
+                    let li = document.createElement('li');
+                    li.innerText = `Увеличить количество полос до "${roadClasses[value.class - 1].laneNumber}"`
+                    let li2 = document.createElement('li');
+                    li2.innerText = `Улучшить класс дороги до "${roadClasses[value.class - 1].name}"`
+                    ul.appendChild(li)
+                    ul.appendChild(li2)
+                    changeRoute = false;
+                }
+            }
+            if (changeRoute) {
+                let li = document.createElement('li');
+                li.innerText = `Добавьте альтернативные маршруты движения автомобилей между выбранными точками (${value.source}, ${value.target})`
+                ul.appendChild(li)
+            }
+            ++i;
+            container.appendChild(ul)
+        }
+    });
+});
+
 
 document.getElementById('generate-directions').addEventListener("click", ev => {
     showNotification('Генерация маршрутов была начата');
     document.getElementById('generate-directions').setAttribute('disabled', 'disabled');
-    // document.getElementById('generate-directions-outer').style.display = 'flex';
-    // document.getElementById('map-container').style.visibility = 'hidden';
-    // document.getElementById('graph-container').style.visibility = 'hidden';
-    // document.getElementById('main-container').style.visibility = 'hidden';
     g.directions = [];
     generateDirections();
 });
@@ -510,6 +578,9 @@ document.getElementById('edge-new-parameters-quality').addEventListener("change"
         return (item.isActiveEdit === true)
     });
     edge = edge[0];
+
+    edge.points = 0;
+
     console.log(edge.class);
     changeEdgeClass(edgeNewParametersQuality);
     edge.class = edgeNewParametersQuality;
@@ -526,6 +597,8 @@ document.getElementById('edge-new-parameters-quality-pavement').addEventListener
     edge.class = document.getElementById('edge-new-parameters-quality').value;
     edge.quality = document.getElementById('edge-new-parameters-quality-quality').value;
     edge.pavementType = document.getElementById('edge-new-parameters-quality-pavement').value;
+
+    edge.points = 0;
 
     edge.accidentCoefficientNerf = 1;
     edge.hasAccidents.forEach((value, index) => {
@@ -554,6 +627,8 @@ document.getElementById('edge-new-parameters-quality-quality').addEventListener(
     edge.class = document.getElementById('edge-new-parameters-quality').value;
     edge.quality = document.getElementById('edge-new-parameters-quality-quality').value;
     edge.pavementType = document.getElementById('edge-new-parameters-quality-pavement').value;
+
+    edge.points = 0;
 
     edge.accidentCoefficientNerf = 1;
     edge.hasAccidents.forEach((value, index) => {
@@ -625,6 +700,46 @@ function sayVerdict(coef, speedCoef) {
         p2.append(span, codeSpeed, span2);
         p.appendChild(p2)
     }
+}
+
+widget = document.getElementById('stat-widget');
+widget.onmousedown = (e) => {
+    var coords = getCoords(widget);
+    var shiftX = e.pageX - coords.left;
+    var shiftY = e.pageY - coords.top;
+
+    widget.style.position = 'absolute';
+    document.body.appendChild(widget);
+    moveAt(e);
+
+    widget.style.zIndex = 999999;
+
+    function moveAt(e) {
+        widget.style.left = e.pageX - shiftX + 'px';
+        widget.style.top = e.pageY - shiftY + 'px';
+    }
+
+    document.onmousemove = function (e) {
+        moveAt(e);
+    };
+
+    widget.onmouseup = function () {
+        document.onmousemove = null;
+        widget.onmouseup = null;
+    };
+
+}
+
+widget.ondragstart = function () {
+    return false;
+};
+
+function getCoords(elem) {   // кроме IE8-
+    var box = elem.getBoundingClientRect();
+    return {
+        top: box.top + pageYOffset,
+        left: box.left + pageXOffset
+    };
 }
 
 var tabs = (function () {

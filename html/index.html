@@ -15,6 +15,11 @@
 </head>
 <body>
 
+<div id="stat-widget">
+    <p class="m-0">Время суток: <b id="worldTimer1">00:00</b></p>
+    <p class="m-0">Машин на дороге: <b id="carsOnMap1">0</b></p>
+</div>
+
 <div id="notification-container">
 </div>
 
@@ -26,16 +31,17 @@
     </div>
 </div>
 
-<!--<div id="generate-directions-outer">-->
-<!--    <div id="generate-directions-modal">-->
-<!--        <div id="generate-directions-modal-header">-->
-<!--            Генерация маршрутов модели-->
-<!--        </div>-->
-<!--        <div id="generate-directions-modal-body">-->
-<!--            <span id="directions-amount"></span>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div id="recommendations-outer">
+    <div id="recommendations-body">
+        <h4 style="margin-bottom: 10px;">Рекомендации по улучшению структуры УДС</h4>
+        <div id="edges-with-points">
+
+        </div>
+    </div>
+    <div id="recommendations-footer">
+        <button id="recommendations-cancel">Закрыть окно</button>
+    </div>
+</div>
 
 <div id="modal_outer">
     <div id="confirm_modal">
@@ -113,6 +119,7 @@
             <div id="edge-reduction-factor">
                 <p id="edge-reduction-factor-verdict"></p>
             </div>
+            <span style="font-size: 12px" class="mb-2">Дорожные ситуации:</span>
             <div id="edge-nerf-coefs">
             </div>
         </div>
@@ -123,7 +130,6 @@
     </div>
 </div>
 
-
 <div id="hello">
     <div id="hello_inner">
         <span>Имитационное моделирование <br> транспортных потоков</span>
@@ -132,24 +138,12 @@
     <div id="upload_model">
         <span>Загрузите существующую имитационную модель <br> или создайте новую</span>
         <div id="models">
-            <!--            <div class="model_to_chose">-->
-            <!--                <span class="model_name">Название модели <b>&times;</b></span>-->
-            <!--                <hr>-->
-            <!--                <ul class="model_parameters">-->
-            <!--                    <li><span>Вершин: </span><b>45</b></li>-->
-            <!--                    <li><span>Рёбер: </span><b>76</b></li>-->
-            <!--                    <li><span>Маршрутов: </span><b>783</b></li>-->
-            <!--                </ul>-->
-            <!--                <button>Выбрать</button>-->
-            <!--            </div>-->
-
             <div class="model_to_chose flex-card">
                 <input type="text" placeholder="Название модели" id="new_model_input">
                 <hr>
                 <button disabled="disabled" id="create_new_model">Создать</button>
             </div>
         </div>
-        <!--        <button id="model_btn" disabled>Продолжить</button>-->
     </div>
     <div id="model-modal-outer">
         <div id="model-modal-settings">
@@ -211,7 +205,10 @@
                             </label>
                         </div>
                         <div id="world-stat">
-                            <h4>Время <b id="worldTimer">00:00</b></h4>
+                            <h4 style="max-width: 200px; width: 200px; min-width: 200px; text-align: center">Время суток<br> <b
+                                    id="worldTimer"
+                                    style="display: inline-block; width: 150px; min-width: 150px;">00:00</b>
+                            </h4>
                             <input type="time" name="selected_time" list="time-list" id="time-input">
                             <datalist id="time-list">
                                 <option value="00:00" label="Минимальное количество машин на дорогах">
@@ -239,9 +236,38 @@
                                 <option value="22:00">
                                 <option value="23:00" label="Минимальное количество машин на дорогах">
                             </datalist>
-                            <h4>Машин на дороге <b id="carsOnMap">0</b></h4>
+                            <h4 style="max-width: 250px; width: 250px; min-width: 250px; text-align: center">Машин на дороге
+                                <b style="width: 150px; min-width: 150px; display: inline-block" id="carsOnMap">0</b>
+                            </h4>
                         </div>
                         <hr>
+                        <span style="font-size: 12px; font-weight: bold">Легенда карты:</span>
+                        <div id="legend-outer">
+                            <div class="legend-inner">
+                                <div style="background-color: black"></div>
+                                <span>Загруженность ребра равна <b>0%</b></span>
+                            </div>
+                            <div class="legend-inner">
+                                <div style="background-color: green"></div>
+                                <span>Загруженность ребра больше <b>0%</b> и меньше <b>25%</b></span>
+                            </div>
+                            <div class="legend-inner">
+                                <div style="background-color: yellow"></div>
+                                <span>Загруженность ребра больше <b>25%</b> и меньше <b>50%</b></span>
+                            </div>
+                            <div class="legend-inner">
+                                <div style="background-color: orange"></div>
+                                <span>Загруженность ребра больше <b>50%</b> и меньше <b>75%</b></span>
+                            </div>
+                            <div class="legend-inner">
+                                <div style="background-color: red"></div>
+                                <span>Загруженность ребра больше <b>75%</b> и меньше <b>90%</b></span>
+                            </div>
+                            <div class="legend-inner">
+                                <div style="background-color: pink"></div>
+                                <span>Загруженность ребра больше <b>90%</b></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="tabs__pane" id="content-2">
                         <span class="span-delimeter">Информация об имитационной модели: </span>
@@ -300,6 +326,7 @@
                     <div class="tabs__pane" id="content-5">
                         <div id="all-stat">
                             <button id="show-all-stat-btn">Посмотреть подробную статистику</button>
+                            <button id="show-recommendations">Посмотреть рекомендации</button>
                         </div>
                         <hr>
                         <div id="model-actions">
@@ -315,111 +342,6 @@
     <div id="map-container" class=""></div>
     <div id="graph-container"></div>
 </div>
-
-<!--<div id="all-container" class="row mt-3">-->
-<!--    <div class="col-12 row">-->
-<!--        <div class="col-2">-->
-<!--            <div class="card">-->
-<!--                <div class="card-header">-->
-<!--                    <p class="card-title p-0 mb-0 text-center">Nodes</p>-->
-<!--                </div>-->
-<!--                <div class="card-body p-2">-->
-<!--                    <div class="form-check col-12">-->
-<!--                        <input type="checkbox" class="form-check-input" id="editCheck1">-->
-<!--                        <label class="form-check-label" for="editCheck1">Is editable</label>-->
-<!--                    </div>-->
-<!--                    <table class="table table-sm table-bordered col-12 tnodes m-0">-->
-<!--                        <thead>-->
-<!--                        <th>id</th>-->
-<!--                        <th>name</th>-->
-<!--                        <th></th>-->
-<!--                        </thead>-->
-<!--                        <tbody>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-4">-->
-<!--            <div class="card">-->
-<!--                <div class="card-header">-->
-<!--                    <p class="card-title p-0 mb-0 text-center">Edges</p>-->
-<!--                </div>-->
-<!--                <div class="card-body p-2">-->
-<!--                    <form action="" class="col-12" id="addEdge">-->
-<!--                        <div class="row mb-2">-->
-<!--                            <div class="col">-->
-<!--                                <label>source</label>-->
-<!--                                <select id="source-nodes" class="col-12 form-control form-control-sm">-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                            <div class="col">-->
-<!--                                <label>target</label>-->
-<!--                                <select id="target-nodes" class="col-12 form-control form-control-sm">-->
-<!--                                </select>-->
-<!--                            </div>-->
-<!--                            <div class="col">-->
-<!--                                <label>button</label>-->
-<!--                                <button type="submit"-->
-<!--                                        class="btn btn-sm btn-success col-12 form-control form-control-sm">Add edge-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </form>-->
-<!--                    <table class="table table-sm table-bordered col-12 tedges m-0">-->
-<!--                        <thead>-->
-<!--                        <th>id</th>-->
-<!--                        <th>source</th>-->
-<!--                        <th>target</th>-->
-<!--                        <th>km</th>-->
-<!--                        <th>cars</th>-->
-<!--                        <th>bandwidth</th>-->
-<!--                        </thead>-->
-<!--                        <tbody>-->
-<!--                        </tbody>-->
-<!--                    </table>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-2">-->
-<!--            <div class="card">-->
-<!--                <div class="card-header">-->
-<!--                    <p class="card-title p-0 mb-0 text-center">Save/Load</p>-->
-<!--                </div>-->
-<!--                <div class="card-body p-2">-->
-<!--                    <div class="form-group">-->
-<!--                        <select id="seletModel" class="form-control form-control-sm"></select>-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                        <input type="text" id="saveName" class="form-control form-control-sm">-->
-<!--                    </div>-->
-<!--                    <div class="row">-->
-<!--                        <div class="col">-->
-<!--                            <button id="saveModel" type="button" class="btn btn-sm btn-primary col-12"-->
-<!--                                    onclick="saveModel()">Save-->
-<!--                            </button>-->
-<!--                        </div>-->
-<!--                        <div class="col">-->
-<!--                            <button id="loadModel" type="button" class="btn btn-sm btn-warning col-12"-->
-<!--                                    onclick="loadModel()">Load-->
-<!--                            </button>-->
-<!--                            <div>-->
-<!--                                <button onclick="runApp()">Начать симуляцию</button>-->
-<!--                                <button onclick="generateDirections()">Сгенерировать маршруты</button>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-2">-->
-<!--            <h3 id="worldTimer">00:00</h3>-->
-<!--            <h3 id="carsOnMap">0</h3>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-
 </body>
 
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
@@ -476,7 +398,7 @@
 <script src="../plugins/sigma.plugins.filter/sigma.plugins.filter.js"></script>
 
 <script src="../plugins/sigma.plugins.leaflet/sigma.plugins.leaflet.js"></script>
-
+<script src="../plugins/sigma.plugins.labels.hover/sigma.canvas.edges.labels.def.js"></script>
 <script src="../plugins/sigma.renderers.linkurious/settings.js"></script>
 <script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.labels.def.js"></script>
 <script src="../plugins/sigma.renderers.linkurious/canvas/sigma.canvas.hovers.def.js"></script>
@@ -499,20 +421,6 @@
 <script src="../src/scripts/mapActions.js"></script>
 <script src="../src/scripts/carActions.js"></script>
 <script src="../src/scripts/main.js"></script>
-<script>
-
-
-    // function resetSelects() {
-    //     $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').empty();
-    //     $.each(g.nodes, (k, v) => {
-    //         $('#source-nodes, #target-nodes, #start-nodes, #finish-nodes').append(new Option(v.label, v.id));
-    //     })
-    // }
-
-    // Fit the view to the graph
-    // leafletPlugin.fitBounds();
-</script>
-
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/7.12.0/firebase-app.js"></script>

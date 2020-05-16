@@ -101,6 +101,7 @@ function loadModel() {
                 let newDirections = $.grep(g.directions, direction => {
                     return !(direction.allNodes.includes(v.id));
                 });
+                $(`#source-nodes option[value=${v.id}], #target-nodes option[value=${v.id}`).remove();
                 showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
                 g.directions = newDirections.slice();
                 let newEdges = [];
@@ -155,6 +156,10 @@ function loadModel() {
         });
 
         $.each(g.edges, function (k, v) {
+            // v.points = 0;
+            // v.load = 0;
+            // v.color = 'black';
+            // v.cars = 0;
             let option = document.createElement('option');
             let tr = document.createElement('tr');
             let td1 = document.createElement('td');
@@ -194,13 +199,19 @@ function loadModel() {
                 let edgeNewParametersQualityQuality = document.getElementById('edge-new-parameters-quality-quality');
                 let edgeNewParametersQualityPavement = document.getElementById('edge-new-parameters-quality-pavement');
 
-                console.log('clicked');
+                console.log('clicked', v);
                 edgeNewParametersQuality.value = v.class;
                 edgeNewParametersQualityQuality.value = v.quality;
                 edgeNewParametersQualityPavement.value = v.pavementType;
+
+                roadAccidents.forEach((val, index) => {
+                    let check = document.getElementById('accident-' + index);
+                    check.checked = !!v.hasAccidents[index].has;
+                })
+
                 modalEdgeEditOuter.style.display = 'flex';
                 changeEdgeClass(v.class);
-                sayVerdict(v.reductionFactor, v.speedCoefficientNerf);
+                sayVerdict(v.reductionFactor, v.speedReductionFactor);
                 v.isActiveEdit = true
             });
 
@@ -236,15 +247,17 @@ function loadModel() {
                 let edgeData = [];
                 let edgeDataOverload = [];
                 let edgeDataFullLength = [];
+                let edgeDataHoursMaxLoad = [];
                 v.drawing.forEach((val, k) => {
                     edgeLabels.push(val[k].time + ':00');
                     edgeData.push(val[k].carsAmount);
                     edgeDataOverload.push(val[k].overload);
                     edgeDataFullLength.push(v.fullLength);
+                    edgeDataHoursMaxLoad.push(val[k].maxLoad);
                 });
                 drawChartForEdge(edgeLabels, edgeData, modalEdgeCanvas);
                 drawBarChartForEdge(edgeLabels, edgeDataOverload, barChartForEdge);
-                drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeRadarChart);
+                drawEdgeRadarChart(edgeLabels, edgeDataFullLength, edgeDataHoursMaxLoad, edgeRadarChart);
 
                 if (v.isActive) {
                     edgeRefreshInterval = setInterval(() => {

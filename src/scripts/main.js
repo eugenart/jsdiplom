@@ -64,11 +64,11 @@ function checkEngine() {
 }
 
 function startDay() {
-    $("#worldTimer").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
+    $("#worldTimer, #worldTimer1").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
     setTimeout(() => {
         runCars();
         redrawEdge();
-        $('#carsOnMap').text(isCarOnRoad());
+        $('#carsOnMap, #carsOnMap1').text(isCarOnRoad());
         minutes += 1;
         minutes === 60 ? (hours += 1, minutes = 0) : null;
         hours >= 24 ? hours = 0 : null;

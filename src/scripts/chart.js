@@ -146,9 +146,10 @@ var edgeRadarChart = new Chart(document.getElementById('modal-edge-load'), {
     }
 });
 
-function drawEdgeRadarChart(graphsLabels, edgeDataFullLength, edgeRadarChart) {
+function drawEdgeRadarChart(graphsLabels, edgeDataFullLength, edgeDataHoursMaxLoad, edgeRadarChart) {
     edgeRadarChart.data.labels = graphsLabels;
     edgeRadarChart.data.datasets[0].data = edgeDataFullLength;
+    edgeRadarChart.data.datasets[1].data = edgeDataHoursMaxLoad;
     edgeRadarChart.update()
 }
 
