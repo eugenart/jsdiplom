@@ -1,20 +1,3 @@
-function runApp() {
-    document.getElementById('start-app-btn').setAttribute('disabled', 'disabled');
-    if (run === false) {
-        cars = [];
-        for (let i = 0; i < carsInCity; i++) {
-            let car = generateCar();
-            cars.push(car)
-        }
-    }
-    if (checkEngine()) {
-        run = !run;
-        startDay();
-    } else {
-        alert('Не все точки соединены!');
-    }
-
-}
 
 function carsToStart() {
     return Math.floor(carsInCity * roadCoefs[hours] * (1 - 0.15 * Math.random())) - isCarOnRoad();
@@ -65,7 +48,7 @@ function checkEngine() {
 
 function startDay() {
     $("#worldTimer, #worldTimer1").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
-    setTimeout(() => {
+    worldTimeout = setTimeout(() => {
         runCars();
         redrawEdge();
         $('#carsOnMap, #carsOnMap1').text(isCarOnRoad());

@@ -219,14 +219,19 @@ body * {
 #stat-widget {
     position: fixed;
     left: 10px;
-    top: 10px;
+    top: 50%;
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.2);
     padding: 10px 20px 10px 20px;
     display: none;
     z-index: 999999;
     background-color: white;
-    width: 220px;
+    width: 250px;
     cursor: move;
+
+}
+
+#save-current-model1 {
+
 }
 
 #all-stat-body {
@@ -603,11 +608,24 @@ body * {
     color: #fff;
     background-color: #ff714b;
     cursor: pointer;
-    width: fit-content;
+    text-align: center;
+    width: 185px;
+    min-width: 185px;
 }
 
-#start-app-btn:disabled {
+#pause-app-btn, #save-current-model1 {
+    font-size: 12px;
+    color: white;
+    background-color: #ff714b;
+    border: none;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
 
+#pause-app-btn:disabled {
+    cursor: not-allowed;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 #world-stat {
@@ -1242,8 +1260,3 @@ html {
 *:before, *:after {
     box-sizing: inherit;
 }
-
-
-/*#map-container {*/
-/*    transition: visibility 0.3s, opacity 0.3s linear;*/
-/*}*/

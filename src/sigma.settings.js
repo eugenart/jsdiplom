@@ -150,7 +150,7 @@
         // Math.pow(size, -1 / edgeLabelSizePowRatio) * size * defaultEdgeLabelSize
         edgeLabelSizePowRatio: 1,
         // {number} The minimum size an edge must have to see its label displayed.
-        edgeLabelThreshold: 1,
+        edgeLabelThreshold: 0,
         /**
          * RESCALE SETTINGS:
          * *****************
@@ -169,8 +169,8 @@
         //          of the nodes will be their size.
         minEdgeSize: 0.5,
         maxEdgeSize: 1,
-        minNodeSize: 1,
-        maxNodeSize: 8,
+        minNodeSize: 0,
+        maxNodeSize: 5,
 
 
         /**

@@ -15,6 +15,16 @@ document.getElementById('save-current-model').addEventListener(("click"), () => 
     });
 });
 
+document.getElementById('save-current-model1').addEventListener(("click"), () => {
+    firebase.database().ref('graphs/' + tempModelParameters.name).set({
+        graph: JSON.stringify(g),
+        modelParameters: JSON.stringify(tempModelParameters)
+    }).then(() => {
+        showNotification('Модель ' + tempModelParameters.name + ' сохранена');
+        console.log(g, tempModelParameters)
+    });
+});
+
 function saveModel() {
     // let modelName = $('#saveName').val();
     // if (modelName) {
@@ -60,6 +70,54 @@ function loadModel() {
         simulationModelName.innerText = modelstat.name;
         simulationModelIntensity.innerText = modelstat.intensityName;
         carsCity.innerText = carsInCity;
+
+        console.log(modelstat.intensity)
+
+        modelstat.intensity.forEach((value, key) => {
+            roadCoefs.push(Number(value[key].coef))
+            console.log(value[key].coef)
+        })
+        let timeList = document.getElementById('time-list')
+        timeObj.forEach((value, index) => {
+            value.roadCoef = roadCoefs[index]
+            let option = document.createElement('option')
+            option.value = value.time
+            if (roadCoefs[index] < 0.2 && roadCoefs[index + 1] && roadCoefs[index + 1] < 0.9) {
+                value.description = 'Минимальное количество машин на дороге'
+            }
+            if (roadCoefs[index] < 0.2) {
+                value.description = 'Минимальное количество машин на дороге'
+            }
+            if (roadCoefs[index] > 0.2 && roadCoefs[index] <= 0.3) {
+                value.description = 'Небольшое количество машин на дороге'
+            }
+            if (roadCoefs[index] > 0.3 && roadCoefs[index] < 0.5) {
+                value.description = 'Среднее количество машин на дороге'
+            }
+            if (roadCoefs[index] >= 0.5 && roadCoefs[index] < 0.8) {
+                value.description = 'Большое количество машин на дороге'
+            }
+            if (roadCoefs[index] >= 0.8) {
+                value.description = 'Максимальное количество машин на дороге'
+            }
+            if (roadCoefs[index - 1]) {
+                if (roadCoefs[index] >= 0.8 && roadCoefs[index - 1] < roadCoefs[index] && roadCoefs[index - 1] < 0.8) {
+                    timeObj[index - 1].description = 'Появление большого количества машин на дороге'
+                }
+                if (roadCoefs[index - 1] >= 0.8 && roadCoefs[index - 1] < 0.8 && roadCoefs[index] >= 0.7 && roadCoefs[index] < 0.8) {
+                    timeObj[index].description = 'Спад активности на дорогах города';
+                }
+            }
+            if (roadCoefs[index + 1]) {
+                if (roadCoefs[index] >= 0.8 && roadCoefs[index] > roadCoefs[index + 1] && roadCoefs[index + 1] < 0.8) {
+                    timeObj[index + 1].description = 'Спад активности на дорогах города';
+                    timeObj[index + 1].roadCoef = roadCoefs[index + 1]
+                }
+            }
+            option.label = value.description
+            timeList.appendChild(option)
+        })
+
 
         if (!g.directions.length) {
             document.getElementById('start-app-btn').setAttribute('disabled', 'disabled');
@@ -181,7 +239,7 @@ function loadModel() {
             // let td4 = document.createElement('td');
             // let td5 = document.createElement('td');
             // let td6 = document.createElement('td');
-            btn.innerText = v.id;
+            btn.innerText = v.label;
             td2.innerText = v.source;
             td3.innerText = v.target;
             btn2.innerText = '✎';
@@ -377,6 +435,7 @@ function loadAllModels() {
                 document.getElementById('main-container').style.visibility = 'visible';
                 showNotification('Выбрана модель ' + currentGeneratingModel);
                 loadModel()
+                document.getElementById('stat-widget').style.display = 'block';
             });
 
             modelsEl.appendChild(model);

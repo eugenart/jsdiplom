@@ -124,6 +124,7 @@ function refreshEdge(currentEdge, car, enter = true) {
 
 function redrawEdge() {
     $.each(g.edges, (k, edge) => {
+        console.log(edge.cars, isCarOnRoad())
         let loadCoef = edge.load / edge.fullLength;
         // console.log(edge.load, edge.fullLength);
         if (edge.cars === 0) {

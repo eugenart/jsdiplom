@@ -16,8 +16,16 @@
 <body>
 
 <div id="stat-widget">
-    <p class="m-0">Время суток: <b id="worldTimer1">00:00</b></p>
-    <p class="m-0">Машин на дороге: <b id="carsOnMap1">0</b></p>
+    <div id="stat-widget-body">
+        <p class="m-0">Время суток: <b id="worldTimer1">00:00</b></p>
+        <p class="m-0">Машин на дороге: <b id="carsOnMap1">0</b></p>
+    </div>
+    <button id="pause-app-btn">Приостановить симуляцию</button>
+    <button id="save-current-model1">Сохранить модель</button>
+    <label class="container-check">Изменить граф
+        <input type="checkbox" id="check-edit1">
+        <span class="checkmark"></span>
+    </label>
 </div>
 
 <div id="notification-container">
@@ -194,7 +202,7 @@
                 <div class="tabs__content">
                     <div class="tabs__pane tabs__pane_show" id="content-1">
                         <div id="cars-div">
-                            <button id="start-app-btn" onclick="runApp()">Начать симуляцию</button>
+                            <button id="start-app-btn">Начать симуляцию</button>
                             <div id="cars-div-inner">
                                 <span>Количество&nbsp;машин&nbsp;в&nbsp;городе:&nbsp;</span>
                                 <input id="cars-in-city">
@@ -205,38 +213,40 @@
                             </label>
                         </div>
                         <div id="world-stat">
-                            <h4 style="max-width: 200px; width: 200px; min-width: 200px; text-align: center">Время суток<br> <b
-                                    id="worldTimer"
-                                    style="display: inline-block; width: 150px; min-width: 150px;">00:00</b>
+                            <h4 style="max-width: 200px; width: 200px; min-width: 200px; text-align: center">Время суток<br>
+                                <b
+                                        id="worldTimer"
+                                        style="display: inline-block; width: 150px; min-width: 150px;">00:00</b>
                             </h4>
                             <input type="time" name="selected_time" list="time-list" id="time-input">
                             <datalist id="time-list">
-                                <option value="00:00" label="Минимальное количество машин на дорогах">
-                                <option value="01:00" label="Минимальное количество машин на дорогах">
-                                <option value="02:00">
-                                <option value="03:00">
-                                <option value="04:00">
-                                <option value="05:00">
-                                <option value="06:00" label="Появление большого количества машин на дорогах">
-                                <option value="07:00">
-                                <option value="08:00" label="Максимальное количество машин на дорогах">
-                                <option value="09:00" label="Начало рабочего дня">
-                                <option value="10:00" label="Спад активности на дорогах города">
-                                <option value="11:00" label="Малое количество машин на дорогах">
-                                <option value="12:00" label="Начало обеденного времени">
-                                <option value="13:00" label="Время обеда">
-                                <option value="14:00">
-                                <option value="15:00">
-                                <option value="16:00">
-                                <option value="17:00" label="Появление большого количества машин на дорогах">
-                                <option value="18:00" label="Максимальное количество машин на дорогах">
-                                <option value="19:00">
-                                <option value="20:00">
-                                <option value="21:00">
-                                <option value="22:00">
-                                <option value="23:00" label="Минимальное количество машин на дорогах">
+                                <!--                                <option value="00:00" label="Минимальное количество машин на дорогах">-->
+                                <!--                                <option value="01:00" label="Минимальное количество машин на дорогах">-->
+                                <!--                                <option value="02:00">-->
+                                <!--                                <option value="03:00">-->
+                                <!--                                <option value="04:00">-->
+                                <!--                                <option value="05:00">-->
+                                <!--                                <option value="06:00" label="Появление большого количества машин на дорогах">-->
+                                <!--                                <option value="07:00">-->
+                                <!--                                <option value="08:00" label="Максимальное количество машин на дорогах">-->
+                                <!--                                <option value="09:00" label="Начало рабочего дня">-->
+                                <!--                                <option value="10:00" label="Спад активности на дорогах города">-->
+                                <!--                                <option value="11:00" label="Малое количество машин на дорогах">-->
+                                <!--                                <option value="12:00" label="Начало обеденного времени">-->
+                                <!--                                <option value="13:00" label="Время обеда">-->
+                                <!--                                <option value="14:00">-->
+                                <!--                                <option value="15:00">-->
+                                <!--                                <option value="16:00">-->
+                                <!--                                <option value="17:00" label="Появление большого количества машин на дорогах">-->
+                                <!--                                <option value="18:00" label="Максимальное количество машин на дорогах">-->
+                                <!--                                <option value="19:00">-->
+                                <!--                                <option value="20:00">-->
+                                <!--                                <option value="21:00">-->
+                                <!--                                <option value="22:00">-->
+                                <!--                                <option value="23:00" label="Минимальное количество машин на дорогах">-->
                             </datalist>
-                            <h4 style="max-width: 250px; width: 250px; min-width: 250px; text-align: center">Машин на дороге
+                            <h4 style="max-width: 250px; width: 250px; min-width: 250px; text-align: center">Машин на
+                                дороге
                                 <b style="width: 150px; min-width: 150px; display: inline-block" id="carsOnMap">0</b>
                             </h4>
                         </div>
@@ -311,7 +321,7 @@
                             <table>
                                 <thead>
                                 <tr>
-                                    <th>ID ребра</th>
+                                    <th>Ребро</th>
                                     <th>Начало ребра</th>
                                     <th>Конец ребра</th>
                                     <th>Редактирование</th>

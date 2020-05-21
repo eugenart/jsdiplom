@@ -2,6 +2,90 @@ document.getElementById('hello_btn').addEventListener('click', (e) => {
     loadAllModels();
 });
 
+document.getElementById('start-app-btn').addEventListener("click", ev => {
+    if (worldTimeout !== null) {
+        ev.target.textContent = 'Начать симуляцию'
+        document.getElementById('pause-app-btn').setAttribute('disabled', 'disabled')
+
+        run = false;
+        hours = 0;
+        minutes = 0;
+
+        clearTimeout(worldTimeout);
+        clearTimeout(roadTripTimeOut);
+        clearInterval(edgeRefreshInterval)
+
+        worldTimeout = null
+        roadTripTimeOut = null
+        edgeRefreshInterval = null
+
+        g.edges.forEach((value, index) => {
+            value.load = null;
+            value.points = null;
+            value.cars = null;
+            value.color = 'black';
+            value.drawing.forEach((v, k) => {
+                v[k].carsAmount = 0
+                v[k].maxLoad = 0
+                v[k].overload = 0
+            })
+        })
+        $('#carsOnMap, #carsOnMap1').text(0);
+        $("#worldTimer, #worldTimer1").text(hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0"));
+        sigmaInstance.refresh();
+    } else {
+        console.log(worldTimeout)
+        ev.target.textContent = 'Завершить симуляцию'
+        document.getElementById('pause-app-btn').removeAttribute('disabled')
+
+        g.edges.forEach((value, index) => {
+            value.load = 0;
+            value.points = 0;
+            value.cars = 0;
+            value.color = 'black';
+            console.log(value.load)
+            value.drawing.forEach((v, k) => {
+                v[k].carsAmount = 0
+                v[k].maxLoad = 0
+                v[k].overload = 0
+            })
+        })
+        if (run === false) {
+            cars = [];
+            for (let i = 0; i < carsInCity; i++) {
+                let car = generateCar();
+                cars.push(car)
+            }
+        }
+        if (checkEngine()) {
+            run = !run;
+            startDay();
+        } else {
+            alert('Не все точки соединены!');
+        }
+    }
+})
+
+document.getElementById('pause-app-btn').addEventListener('click', ev => {
+    if (worldTimeout !== null) {
+        clearTimeout(worldTimeout);
+        worldTimeout = null
+        ev.target.textContent = 'Продолжить симуляцию'
+    } else {
+        ev.target.textContent = 'Приостановить симуляцию'
+        worldTimeout = setTimeout(() => {
+            runCars();
+            redrawEdge();
+            $('#carsOnMap, #carsOnMap1').text(isCarOnRoad());
+            minutes += 1;
+            minutes === 60 ? (hours += 1, minutes = 0) : null;
+            hours >= 24 ? hours = 0 : null;
+            startDay();
+        }, minuteVsReal)
+    }
+})
+
+
 document.addEventListener('DOMContentLoaded', evt => {
     document.getElementById('cars-in-city').value = carsInCity;
     let edgeNewParametersQuality = document.getElementById('edge-new-parameters-quality');
@@ -229,6 +313,10 @@ document.getElementById('check-edit').addEventListener("change", ev => {
     isEditable = !isEditable;
 });
 
+document.getElementById('check-edit1').addEventListener("change", ev => {
+    isEditable = !isEditable;
+});
+
 document.getElementById('source-nodes').addEventListener("change", ev => {
     let snVal = document.getElementById('source-nodes');
     let tnVal = document.getElementById('target-nodes');
@@ -350,7 +438,6 @@ function appendModel() {
         document.getElementById('map-container').style.visibility = 'visible';
         document.getElementById('graph-container').style.visibility = 'visible';
         document.getElementById('main-container').style.visibility = 'visible';
-
     });
 
     modelsEl.appendChild(model);
@@ -395,7 +482,6 @@ document.getElementById('recommendations-cancel').addEventListener("click", ev =
 
 document.getElementById('start-app-btn').addEventListener("click", ev => {
     let statBody = document.getElementById('all-stat-body');
-    document.getElementById('stat-widget').style.display = 'block';
     if (!wasFilled) {
         wasFilled = true;
         g.edges.forEach((value, index) => {
@@ -702,8 +788,9 @@ function sayVerdict(coef, speedCoef) {
     }
 }
 
+widgetBody = document.getElementById('stat-widget-body');
 widget = document.getElementById('stat-widget');
-widget.onmousedown = (e) => {
+widgetBody.onmousedown = (e) => {
     var coords = getCoords(widget);
     var shiftX = e.pageX - coords.left;
     var shiftY = e.pageY - coords.top;
@@ -723,14 +810,14 @@ widget.onmousedown = (e) => {
         moveAt(e);
     };
 
-    widget.onmouseup = function () {
+    widgetBody.onmouseup = function () {
         document.onmousemove = null;
-        widget.onmouseup = null;
+        widgetBody.onmouseup = null;
     };
 
 }
 
-widget.ondragstart = function () {
+widgetBody.ondragstart = function () {
     return false;
 };
 

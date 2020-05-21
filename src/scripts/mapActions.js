@@ -62,7 +62,7 @@ map.on('click', function (e) {
         nodesNumber += 1;
         let newNode = {
             id: 'n' + nodesNumber,
-            label: 'Node №' + nodesNumber,
+            label: 'Node ' + nodesNumber,
             x: Math.random(),
             y: Math.random(),
             lat: e.latlng.lat, // mandatory field
@@ -91,7 +91,7 @@ map.on('click', function (e) {
             let newDirections = $.grep(g.directions, direction => {
                 return !(direction.allNodes.includes(newNode.id));
             });
-            $(`#source-nodes option[value=${v.id}], #target-nodes option[value=${v.id}`).remove();
+            $(`#source-nodes option[value=${newNode.id}], #target-nodes option[value=${newNode.id}`).remove();
             showNotification('Удалено ' + (g.directions.length - newDirections.length) + ' маршрута(-ов)');
             g.directions = newDirections.slice();
             let newEdges = [];
@@ -228,7 +228,7 @@ document.getElementById('addEdge').addEventListener('click', (e) => {
 
     // let td5 = document.createElement('td');
     // let td6 = document.createElement('td');
-    btn.innerText = newEdge.id;
+    btn.innerText = newEdge.label;
     td2.innerText = newEdge.source;
     td3.innerText = newEdge.target;
 
